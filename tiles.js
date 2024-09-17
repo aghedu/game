@@ -1,6 +1,6 @@
 import { playerX, playerY } from "./player.js";
 import { ctx, canvas } from "./canvas.js";
-import { getCookie, setCookie, changeItemState } from "../cookies.js";
+import { getCookie, setCookie, changeItemState } from "./cookies.js";
 
 const tiles = [];
 const TILE_WEIGHTS = [30, 30, 30, 30, 15, 15, 15, 15, 15, 0, 0];

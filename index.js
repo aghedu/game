@@ -1,6 +1,6 @@
-import { canvas, ctx } from "./src/canvas.js";
-import { animatePlayer } from "./src/player.js";
-import { animateTiles } from "./src/tiles.js";
+import { canvas, ctx } from "./canvas.js";
+import { animatePlayer } from "./player.js";
+import { animateTiles } from "./tiles.js";
 import {
   getCookie,
   setCookie,
