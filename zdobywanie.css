@@ -1,0 +1,75 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow: hidden;
+}
+
+#canvas-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#canvas {
+  transform-origin: 0 0;
+}
+
+/* Arrow buttons styling */
+.arrow-buttons {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.arrow-button {
+  background-color: rgba(0, 123, 255, 0.7);
+  color: white;
+  border: none;
+  padding: 15px;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.arrow-button:hover {
+  background-color: rgba(0, 123, 255, 0.9);
+  transform: scale(1.1);
+}
+
+.arrow-button:active {
+  background-color: rgba(0, 86, 179, 0.9);
+  transform: scale(0.95);
+}
+
+/* Arrow icons */
+.arrow-button::before {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+#arrow-left::before {
+  border-width: 10px 17px 10px 0;
+  border-color: transparent #ffffff transparent transparent;
+}
+
+#arrow-right::before {
+  border-width: 10px 0 10px 17px;
+  border-color: transparent transparent transparent #ffffff;
+}
