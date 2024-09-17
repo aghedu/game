@@ -96,7 +96,7 @@ function checkCollisions() {
           }
 
           if (tile.type == 2) {
-            if (playerX < 200) location.href = "./flanki.html";
+            if (playerX < 200) location.href = "../flanki.html";
             else if (playerY > 200 && playerX > 200)
               location.href = "./zdobywanie.html";
             else location.href = "./lapanie.html";

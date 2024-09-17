@@ -1,6 +1,6 @@
 import { canvas, ctx, setScore, score } from "./flanki.js";
 import { startHarnasFlip, getHarnasDimensions } from "./harnas.js";
-import { getCookie } from "../cookies.js";
+import { getCookie } from "./cookies.js";
 let hardmode = getCookie("ruskacz") == "true" ? 1 : 0;
 let start = false;
 let angle = 0;
@@ -59,9 +59,9 @@ function initializeImages(callback) {
   arrowOrangeImage.onload = onImageLoad;
   lotkaImage.onload = onImageLoad;
 
-  arrowImage.src = "../arrow_big.png";
-  arrowOrangeImage.src = "../arrow_big_orange.png";
-  lotkaImage.src = "../lotka.png";
+  arrowImage.src = "./arrow_big.png";
+  arrowOrangeImage.src = "./arrow_big_orange.png";
+  lotkaImage.src = "./lotka.png";
 }
 
 function prepareArrowCanvas() {

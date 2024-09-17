@@ -1,4 +1,4 @@
-import { getCookie, setCookie, changeItemState } from "../cookies.js";
+import { getCookie, setCookie, changeItemState } from "./cookies.js";
 import { animateBackground } from "./background.js";
 import { animateHarnas, initHarnas } from "./harnas.js";
 import {
