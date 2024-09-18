@@ -319,7 +319,7 @@ function update() {
 
 function handleDeviceMotion(event) {
   const tilt = event.accelerationIncludingGravity.x;
-  player.velocityX -= tilt * tiltSensitivity * 0.05;
+  player.velocityX -= tilt * tiltSensitivity * 0.075;
 }
 let stopped = false;
 
