@@ -259,22 +259,18 @@ function resetMoving() {
 }
 // For touch devices
 document.getElementById("arrow-left").addEventListener("pointerdown", (e) => {
-  e.preventDefault();
   resetMoving();
   isMoving.left = true;
 });
 document.getElementById("arrow-right").addEventListener("pointerdown", (e) => {
-  e.preventDefault();
   resetMoving();
   isMoving.right = true;
 });
 document.getElementById("arrow-up").addEventListener("pointerdown", (e) => {
-  e.preventDefault();
   resetMoving();
   isMoving.up = true;
 });
 document.getElementById("arrow-down").addEventListener("pointerdown", (e) => {
-  e.preventDefault();
   resetMoving();
   isMoving.down = true;
 });

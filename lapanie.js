@@ -256,19 +256,15 @@ function animate(timestamp) {
 // For touch devices
 
 document.getElementById("arrow-left").addEventListener("pointerdown", (e) => {
-  e.preventDefault();
   isMoving.left = true;
 });
 document.getElementById("arrow-right").addEventListener("pointerdown", (e) => {
-  e.preventDefault();
   isMoving.right = true;
 });
 document.getElementById("arrow-left").addEventListener("touchstart", (e) => {
-  e.preventDefault();
   isMoving.left = true;
 });
 document.getElementById("arrow-right").addEventListener("touchend ", (e) => {
-  e.preventDefault();
   isMoving.right = true;
 });
 
