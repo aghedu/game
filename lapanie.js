@@ -261,56 +261,32 @@ function handleMouseDown(direction) {
 function handleMouseUp(direction) {
   isMoving[direction] = false;
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  const leftButton = document.getElementById("arrow-left");
-  const rightButton = document.getElementById("arrow-right");
-
-  // Mouse events
-  leftButton.addEventListener("mousedown", () => handleMouseDown("left"));
-  rightButton.addEventListener("mousedown", () => handleMouseDown("right"));
-
-  leftButton.addEventListener("mouseup", () => handleMouseUp("left"));
-  rightButton.addEventListener("mouseup", () => handleMouseUp("right"));
-
-  // Touch events
-  leftButton.addEventListener("touchstart", (e) => handleTouchStart("left", e));
-  rightButton.addEventListener("touchstart", (e) =>
-    handleTouchStart("right", e)
-  );
-
-  leftButton.addEventListener("touchend", (e) => handleTouchEnd("left", e));
-  rightButton.addEventListener("touchend", (e) => handleTouchEnd("right", e));
-
-  // Global mouseup and touchend events
-  document.addEventListener("mouseup", () => {
-    isMoving.left = false;
-    isMoving.right = false;
-  });
-
-  document.addEventListener("touchend", () => {
-    isMoving.left = false;
-    isMoving.right = false;
-  });
-
-  // Keyboard events
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowLeft") {
-      isMoving.left = true;
-    } else if (e.key === "ArrowRight") {
-      isMoving.right = true;
-    }
-  });
-
-  document.addEventListener("keyup", (e) => {
-    if (e.key === "ArrowLeft") {
-      isMoving.left = false;
-    } else if (e.key === "ArrowRight") {
-      isMoving.right = false;
-    }
-  });
+function resetMoving() {
+  isMoving.left = false;
+  isMoving.right = false;
+}
+// For touch devices
+document.getElementById("arrow-left").addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  resetMoving();
+  isMoving.left = true;
+});
+document.getElementById("arrow-right").addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  resetMoving();
+  isMoving.right = true;
 });
 
+document
+  .getElementById("arrow-left")
+  .addEventListener("touchend", () => (isMoving.left = false));
+document
+  .getElementById("arrow-right")
+  .addEventListener("touchend", () => (isMoving.right = false));
+
+document.addEventListener("touchend", () => {
+  resetMoving();
+});
 animate();
 
 export { canvas, ctx, animate };
