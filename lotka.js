@@ -277,13 +277,13 @@ arrowUpButton.addEventListener("mouseup", (event) => {
   throwLotka();
 });
 
-arrowUpButton.addEventListener("touchstart", (event) => {
+arrowUpButton.addEventListener("pointerdown", (event) => {
   event.preventDefault();
   isButtonPressed = true;
   startCharging();
 });
 
-arrowUpButton.addEventListener("touchend", (event) => {
+arrowUpButton.addEventListener("pointerup", (event) => {
   event.preventDefault();
   isButtonPressed = false;
   throwLotka();
@@ -294,9 +294,7 @@ arrowUpButton.addEventListener("touchmove", (event) => {
 });
 
 function init() {
-  initializeImages(() => {
-    console.log("Images loaded, game starting...");
-  });
+  initializeImages(() => {});
 }
 
 init();

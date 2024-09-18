@@ -192,6 +192,16 @@ function updatePlayerPosition() {
   // Update camera position
   updateCamera(playerX, playerY);
 }
+function handleTouchStart(direction, event) {
+  event.preventDefault();
+  resetMoving();
+  isMoving[direction] = true;
+}
+
+function handleTouchEnd(direction, event) {
+  event.preventDefault();
+  isMoving[direction] = false;
+}
 document
   .getElementById("arrow-left")
   .addEventListener("mousedown", () => (isMoving.left = true));
@@ -248,22 +258,22 @@ function resetMoving() {
   isMoving.down = false;
 }
 // For touch devices
-document.getElementById("arrow-left").addEventListener("touchstart", (e) => {
+document.getElementById("arrow-left").addEventListener("pointerdown", (e) => {
   e.preventDefault();
   resetMoving();
   isMoving.left = true;
 });
-document.getElementById("arrow-right").addEventListener("touchstart", (e) => {
+document.getElementById("arrow-right").addEventListener("pointerdown", (e) => {
   e.preventDefault();
   resetMoving();
   isMoving.right = true;
 });
-document.getElementById("arrow-up").addEventListener("touchstart", (e) => {
+document.getElementById("arrow-up").addEventListener("pointerdown", (e) => {
   e.preventDefault();
   resetMoving();
   isMoving.up = true;
 });
-document.getElementById("arrow-down").addEventListener("touchstart", (e) => {
+document.getElementById("arrow-down").addEventListener("pointerdown", (e) => {
   e.preventDefault();
   resetMoving();
   isMoving.down = true;
@@ -271,18 +281,18 @@ document.getElementById("arrow-down").addEventListener("touchstart", (e) => {
 
 document
   .getElementById("arrow-left")
-  .addEventListener("touchend", () => (isMoving.left = false));
+  .addEventListener("pointerup", () => (isMoving.left = false));
 document
   .getElementById("arrow-right")
-  .addEventListener("touchend", () => (isMoving.right = false));
+  .addEventListener("pointerup", () => (isMoving.right = false));
 document
   .getElementById("arrow-up")
-  .addEventListener("touchend", () => (isMoving.up = false));
+  .addEventListener("pointerup", () => (isMoving.up = false));
 document
   .getElementById("arrow-down")
-  .addEventListener("touchend", () => (isMoving.down = false));
+  .addEventListener("pointerup", () => (isMoving.down = false));
 
-document.addEventListener("touchend", () => {
+document.addEventListener("pointerup", () => {
   resetMoving();
 });
 function animatePlayer() {
