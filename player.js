@@ -192,16 +192,7 @@ function updatePlayerPosition() {
   // Update camera position
   updateCamera(playerX, playerY);
 }
-function handleTouchStart(direction, event) {
-  event.preventDefault();
-  resetMoving();
-  isMoving[direction] = true;
-}
 
-function handleTouchEnd(direction, event) {
-  event.preventDefault();
-  isMoving[direction] = false;
-}
 document
   .getElementById("arrow-left")
   .addEventListener("mousedown", () => (isMoving.left = true));
