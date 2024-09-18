@@ -23,7 +23,7 @@ let platforms = [];
 let stopGame = false;
 let score = 0;
 let gameLoop;
-let tiltSensitivity = 2;
+let tiltSensitivity = 0.5;
 let cameraY = 0;
 let gameFrozen = false;
 let freezeTimer = 0;
@@ -33,7 +33,6 @@ let freezeStage = 0; // 0: not frozen, 1: szot1, 2: szot2
 let maxSpeed = 12;
 let acceleration = 0.6;
 let deceleration = 0.85;
-let isMoving = { left: false, right: false };
 let jumpedPlatforms = new Set();
 
 // Player images
@@ -168,7 +167,7 @@ function drawPlayer() {
       break;
     default:
       let currentImages =
-        isMoving.left || isMoving.right
+        Math.abs(player.velocityX) > 0.1
           ? playerImages.walking
           : playerImages.standing;
       let currentFrame =
@@ -237,21 +236,18 @@ function update() {
   player.velocityY += 0.5;
   player.y += player.velocityY;
 
-  if (isMoving.left) {
-    player.velocityX = Math.max(player.velocityX - acceleration, -maxSpeed);
+  // Apply deceleration
+  player.velocityX *= deceleration;
+
+  // Update player position based on velocity
+  player.x += player.velocityX;
+
+  // Set player direction based on velocity
+  if (player.velocityX > 0.1) {
+    player.direction = 1;
+  } else if (player.velocityX < -0.1) {
     player.direction = -1;
   }
-  if (isMoving.right) {
-    player.velocityX = Math.min(player.velocityX + acceleration, maxSpeed);
-    player.direction = 1;
-  }
-
-  if (!isMoving.left && !isMoving.right) {
-    player.velocityX *= deceleration;
-    if (Math.abs(player.velocityX) < 0.1) player.velocityX = 0;
-  }
-
-  player.x += player.velocityX;
 
   if (player.x < 0) player.x = 0;
   if (player.x + player.width > canvas.width)
@@ -314,13 +310,15 @@ function update() {
     }, 200); // Show rzyg1.png for 2 seconds before reloading
   }
 
-  player.frame += isMoving.left || isMoving.right ? 5 : 1;
+  player.frame += Math.abs(player.velocityX) > 0.1 ? 5 : 1;
 }
 
 function handleDeviceMotion(event) {
   const tilt = event.accelerationIncludingGravity.x;
-  player.velocityX -= tilt * tiltSensitivity * 0.075;
+  player.velocityX -= tilt * tiltSensitivity;
+  player.velocityX = Math.max(-maxSpeed, Math.min(maxSpeed, player.velocityX));
 }
+
 let stopped = false;
 
 function gameLoopFunction() {
@@ -348,69 +346,6 @@ function init() {
 loadPlayerImages();
 
 window.addEventListener("resize", setupCanvas);
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowLeft") isMoving.left = true;
-  else if (e.key === "ArrowRight") isMoving.right = true;
-});
-
-document.addEventListener("keyup", (e) => {
-  if (e.key === "ArrowLeft") isMoving.left = false;
-  else if (e.key === "ArrowRight") isMoving.right = false;
-});
-
-document
-  .getElementById("arrow-left")
-  .addEventListener("mousedown", () => (isMoving.left = true));
-document
-  .getElementById("arrow-right")
-  .addEventListener("mousedown", () => (isMoving.right = true));
-document
-  .getElementById("arrow-left")
-  .addEventListener("mouseup", () => (isMoving.left = false));
-document
-  .getElementById("arrow-right")
-  .addEventListener("mouseup", () => (isMoving.right = false));
-
-document.getElementById("arrow-left").addEventListener("touchstart", (e) => {
-  e.preventDefault();
-  isMoving.left = true;
-});
-document.getElementById("arrow-right").addEventListener("touchstart", (e) => {
-  e.preventDefault();
-  isMoving.right = true;
-});
-
-document
-  .getElementById("arrow-left")
-  .addEventListener("touchend", () => (isMoving.left = false));
-document
-  .getElementById("arrow-right")
-  .addEventListener("touchend", () => (isMoving.right = false));
-
-document.addEventListener("mouseup", () => {
-  isMoving.left = false;
-  isMoving.right = false;
-});
-
-document.addEventListener("touchend", () => {
-  isMoving.left = false;
-  isMoving.right = false;
-});
-
-canvas.addEventListener("touchstart", (event) => {
-  const touch = event.touches[0];
-  if (touch.clientX < canvas.width / 2) {
-    isMoving.left = true;
-  } else {
-    isMoving.right = true;
-  }
-});
-
-canvas.addEventListener("touchend", () => {
-  isMoving.left = false;
-  isMoving.right = false;
-});
 
 if (window.DeviceMotionEvent) {
   window.addEventListener("devicemotion", handleDeviceMotion, true);
