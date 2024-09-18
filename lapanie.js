@@ -253,58 +253,11 @@ function animate(timestamp) {
   requestAnimationFrame(animate);
 }
 
-document.getElementById("arrow-left").addEventListener("mousedown", () => {
-  isMoving.left = true;
-  alert(1);
-});
-document
-  .getElementById("arrow-right")
-  .addEventListener("mousedown", () => (isMoving.right = true));
-
-document
-  .getElementById("arrow-left")
-  .addEventListener("mouseup", () => (isMoving.left = false));
-document
-  .getElementById("arrow-right")
-  .addEventListener("mouseup", () => (isMoving.right = false));
-
-document.addEventListener("keydown", (e) => {
-  resetMoving();
-  if (e.key === "ArrowLeft") {
-    isMoving.left = true;
-  } else if (e.key === "ArrowRight") {
-    isMoving.right = true;
-  } else if (e.key === "ArrowUp") {
-    isMoving.up = true;
-  } else if (e.key === "ArrowDown") {
-    isMoving.down = true;
-  }
-});
-
-document.addEventListener("keyup", (e) => {
-  if (e.key === "ArrowLeft") {
-    isMoving.left = false;
-  } else if (e.key === "ArrowRight") {
-    isMoving.right = false;
-  } else if (e.key === "ArrowUp") {
-    isMoving.up = false;
-  } else if (e.key === "ArrowDown") {
-    isMoving.down = false;
-  }
-});
-function resetMoving() {
-  isMoving.left = false;
-  isMoving.right = false;
-  isMoving.up = false;
-  isMoving.down = false;
-}
 // For touch devices
 document.getElementById("arrow-left").addEventListener("pointerdown", (e) => {
-  resetMoving();
   isMoving.left = true;
 });
 document.getElementById("arrow-right").addEventListener("pointerdown", (e) => {
-  resetMoving();
   isMoving.right = true;
 });
 
@@ -315,9 +268,6 @@ document
   .getElementById("arrow-right")
   .addEventListener("pointerup", () => (isMoving.right = false));
 
-document.addEventListener("pointerup", () => {
-  resetMoving();
-});
 animate();
 
 export { canvas, ctx, animate };
