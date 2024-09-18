@@ -253,9 +253,10 @@ function animate(timestamp) {
   requestAnimationFrame(animate);
 }
 
-document
-  .getElementById("arrow-left")
-  .addEventListener("mousedown", () => (isMoving.left = true));
+document.getElementById("arrow-left").addEventListener("mousedown", () => {
+  isMoving.left = true;
+  alert(1);
+});
 document
   .getElementById("arrow-right")
   .addEventListener("mousedown", () => (isMoving.right = true));
