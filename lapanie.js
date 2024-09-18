@@ -279,11 +279,6 @@ document
   .getElementById("arrow-right")
   .addEventListener("pointerup", () => (isMoving.right = false));
 
-document.addEventListener("mouseup", () => {
-  isMoving.left = false;
-  isMoving.right = false;
-});
-
 document.addEventListener("touchend", () => {
   isMoving.left = false;
   isMoving.right = false;
