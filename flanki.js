@@ -21,14 +21,15 @@ function resizeCanvas() {
   ctx.webkitImageSmoothingEnabled = false;
   ctx.imageSmoothingEnabled = false;
 }
-
+let stop = false;
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 function setScore(newScore) {
   score = newScore;
-  if (score == 5) {
+  if (score == 5 && !stop) {
     setCookie(getCookie("ruskacz") == "true" ? "vodka" : "ruskacz", true);
     location.href = "./index.html";
+    stop = true;
   }
 }
 function animate() {

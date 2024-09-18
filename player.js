@@ -95,7 +95,9 @@ function checkCollisions() {
             }
           }
 
-          if (tile.type == 2) {
+          if (tile.type == 2 && !stop) {
+            stop = true;
+
             if (playerX < 200) location.href = "./flanki.html";
             else if (playerY > 200 && playerX > 200)
               location.href = "./zdobywanie.html";
@@ -189,10 +191,6 @@ function updatePlayerPosition() {
 
   // Update camera position
   updateCamera(playerX, playerY);
-  if (playerX > 120 && playerX < 150 && playerY < 10 && playerY > -10) {
-    location.href = "../flanki.html";
-    stop = true;
-  }
 }
 document
   .getElementById("arrow-left")

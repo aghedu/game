@@ -323,12 +323,13 @@ let stopped = false;
 
 function gameLoopFunction() {
   if (score > 13) {
-    if (!stopped)
+    if (!stopped) {
       setCookie(getCookie("marlboro") == "true" ? "joint" : "marlboro", true);
-    stopped = true;
-    setTimeout(() => {
-      location.href = "index.html";
-    }, 75);
+      stopped = true;
+      setTimeout(() => {
+        location.href = "index.html";
+      }, 75);
+    }
   }
   update();
   draw();
