@@ -83,7 +83,7 @@ function endGame() {
   canvas.style.display = "none";
   console.clear();
   document.body.innerHTML =
-    "<h1>MUSISZ ODNALEŹĆ ŹRÓDŁO</h1> <!--SZUKAJ W OKOLICY 49.438166, 20.721201-->";
+    "<h1>ZNAJDŹ ŹRÓDŁO</h1> <!--SZUKAJ W OKOLICY 49.438166, 20.721201-->";
 }
 
 function startGame() {
