@@ -12,7 +12,7 @@ let fruits = [];
 let score = -3 * hardmode;
 let stop = false;
 
-// New variables for smooth movement
+// Variables for smooth movement
 const goodFruitImages = [];
 const badFruitImages = [];
 let background;
@@ -24,7 +24,7 @@ let deceleration = 0.9;
 let isMoving = { left: false, right: false };
 let imagesLoaded = 0;
 let playerFrame = 0;
-let playerAnimationSpeed = 30; // Adjust this to change animation speed
+let playerAnimationSpeed = 30;
 let playerDirection = 1; // 1 for right, -1 for left
 
 const totalImages = goodFruitImages.length + badFruitImages.length;
@@ -32,6 +32,7 @@ let playerImages = {
   standing: [],
   walking: [],
 };
+
 function onImageLoad() {
   imagesLoaded++;
   if (imagesLoaded === totalImages) {
@@ -77,21 +78,20 @@ loadImages();
 const img = new Image();
 img.src = "a.png";
 
-// New variables for limiting red fruits
-const maxRedFruits = 8; // Maximum number of red fruits on screen at once
+// Variables for limiting red fruits
+const maxRedFruits = 8;
 let redFruitCount = 0;
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   ctx.fillStyle = "#a0cd3e";
-
-  ctx.webkitImageSmoothingEnabled = false; // Enable image smoothing
+  ctx.webkitImageSmoothingEnabled = false;
   ctx.imageSmoothingEnabled = false;
-
   playerY = canvas.height - playerHeight * 2.75;
   playerX = canvas.width / 2 - playerWidth / 2;
 }
+
 let defaultWidth = 50;
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
@@ -103,12 +103,11 @@ function createFruit() {
   const imageArray = isBad ? badFruitImages : goodFruitImages;
   const randomImage = imageArray[Math.floor(Math.random() * imageArray.length)];
 
-  // Calculate the scaling factor based on defaultWidth
   let width = defaultWidth;
   let height = (randomImage.height / randomImage.width) * defaultWidth;
 
   return {
-    x: Math.random() * (canvas.width - width), // Update to subtract the fruit width
+    x: Math.random() * (canvas.width - width),
     y: -100,
     width: width,
     height: height,
@@ -148,7 +147,7 @@ function drawPlayer() {
 
 function drawFruits() {
   ctx.save();
-  ctx.webkitImageSmoothingEnabled = true; // Enable smoothing for fruits
+  ctx.webkitImageSmoothingEnabled = true;
   ctx.imageSmoothingEnabled = true;
 
   fruits.forEach((fruit) => {
@@ -173,7 +172,6 @@ function moveFruits() {
   });
 
   if (Math.random() < 0.035) {
-    // 3% chance of creating a new fruit each frame
     fruits.push(createFruit());
   }
 }
@@ -181,7 +179,6 @@ function moveFruits() {
 function updatePlayerPosition() {
   if (stop) return;
 
-  // Apply acceleration
   if (isMoving.left) {
     velocityX = Math.max(velocityX - acceleration, -maxSpeed);
     playerDirection = -1;
@@ -191,19 +188,13 @@ function updatePlayerPosition() {
     playerDirection = 1;
   }
 
-  // Apply deceleration
   if (!isMoving.left && !isMoving.right) {
     velocityX *= deceleration;
     if (Math.abs(velocityX) < 0.1) velocityX = 0;
   }
 
-  // Update position
   playerX += velocityX;
-
-  // Keep player within bounds
   playerX = Math.max(0, Math.min(canvas.width - playerWidth, playerX));
-
-  // Update animation frame
   playerFrame += isMoving.left || isMoving.right ? 5 : 1;
 }
 
@@ -253,75 +244,73 @@ function animate(timestamp) {
   requestAnimationFrame(animate);
 }
 
-document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowLeft") {
-    isMoving.left = true;
-  } else if (e.key === "ArrowRight") {
-    isMoving.right = true;
-  }
-});
+function handleTouchStart(direction, event) {
+  event.preventDefault();
+  isMoving[direction] = true;
+}
 
-document.addEventListener("keyup", (e) => {
-  if (e.key === "ArrowLeft") {
+function handleTouchEnd(direction, event) {
+  event.preventDefault();
+  isMoving[direction] = false;
+}
+
+function handleMouseDown(direction) {
+  isMoving[direction] = true;
+}
+
+function handleMouseUp(direction) {
+  isMoving[direction] = false;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const leftButton = document.getElementById("arrow-left");
+  const rightButton = document.getElementById("arrow-right");
+
+  // Mouse events
+  leftButton.addEventListener("mousedown", () => handleMouseDown("left"));
+  rightButton.addEventListener("mousedown", () => handleMouseDown("right"));
+
+  leftButton.addEventListener("mouseup", () => handleMouseUp("left"));
+  rightButton.addEventListener("mouseup", () => handleMouseUp("right"));
+
+  // Touch events
+  leftButton.addEventListener("touchstart", (e) => handleTouchStart("left", e));
+  rightButton.addEventListener("touchstart", (e) =>
+    handleTouchStart("right", e)
+  );
+
+  leftButton.addEventListener("touchend", (e) => handleTouchEnd("left", e));
+  rightButton.addEventListener("touchend", (e) => handleTouchEnd("right", e));
+
+  // Global mouseup and touchend events
+  document.addEventListener("mouseup", () => {
     isMoving.left = false;
-  } else if (e.key === "ArrowRight") {
     isMoving.right = false;
-  }
-});
-document
-  .getElementById("arrow-left")
-  .addEventListener("mousedown", () => (isMoving.left = true));
-document
-  .getElementById("arrow-right")
-  .addEventListener("mousedown", () => (isMoving.right = true));
+  });
 
-document
-  .getElementById("arrow-left")
-  .addEventListener("mouseup", () => (isMoving.left = false));
-document
-  .getElementById("arrow-right")
-  .addEventListener("mouseup", () => (isMoving.right = false));
+  document.addEventListener("touchend", () => {
+    isMoving.left = false;
+    isMoving.right = false;
+  });
 
-document
-  .getElementById("arrow-left")
-  .addEventListener("mousedown", () => (isMoving.left = true));
-document
-  .getElementById("arrow-right")
-  .addEventListener("mousedown", () => (isMoving.right = true));
+  // Keyboard events
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") {
+      isMoving.left = true;
+    } else if (e.key === "ArrowRight") {
+      isMoving.right = true;
+    }
+  });
 
-document
-  .getElementById("arrow-left")
-  .addEventListener("mouseup", () => (isMoving.left = false));
-document
-  .getElementById("arrow-right")
-  .addEventListener("mouseup", () => (isMoving.right = false));
-
-// For touch devices
-document.getElementById("arrow-left").addEventListener("touchstart", (e) => {
-  e.preventDefault();
-  isMoving.left = true;
-});
-document.getElementById("arrow-right").addEventListener("touchstart", (e) => {
-  e.preventDefault();
-  isMoving.right = true;
+  document.addEventListener("keyup", (e) => {
+    if (e.key === "ArrowLeft") {
+      isMoving.left = false;
+    } else if (e.key === "ArrowRight") {
+      isMoving.right = false;
+    }
+  });
 });
 
-document
-  .getElementById("arrow-left")
-  .addEventListener("touchend", () => (isMoving.left = false));
-document
-  .getElementById("arrow-right")
-  .addEventListener("touchend", () => (isMoving.right = false));
-
-document.addEventListener("mouseup", () => {
-  isMoving.left = false;
-  isMoving.right = false;
-});
-
-document.addEventListener("touchend", () => {
-  isMoving.left = false;
-  isMoving.right = false;
-});
 animate();
 
 export { canvas, ctx, animate };
