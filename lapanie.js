@@ -253,49 +253,6 @@ function animate(timestamp) {
   requestAnimationFrame(animate);
 }
 
-document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowLeft") {
-    isMoving.left = true;
-  } else if (e.key === "ArrowRight") {
-    isMoving.right = true;
-  }
-});
-
-document.addEventListener("keyup", (e) => {
-  if (e.key === "ArrowLeft") {
-    isMoving.left = false;
-  } else if (e.key === "ArrowRight") {
-    isMoving.right = false;
-  }
-});
-document
-  .getElementById("arrow-left")
-  .addEventListener("mousedown", () => (isMoving.left = true));
-document
-  .getElementById("arrow-right")
-  .addEventListener("mousedown", () => (isMoving.right = true));
-
-document
-  .getElementById("arrow-left")
-  .addEventListener("mouseup", () => (isMoving.left = false));
-document
-  .getElementById("arrow-right")
-  .addEventListener("mouseup", () => (isMoving.right = false));
-
-document
-  .getElementById("arrow-left")
-  .addEventListener("mousedown", () => (isMoving.left = true));
-document
-  .getElementById("arrow-right")
-  .addEventListener("mousedown", () => (isMoving.right = true));
-
-document
-  .getElementById("arrow-left")
-  .addEventListener("mouseup", () => (isMoving.left = false));
-document
-  .getElementById("arrow-right")
-  .addEventListener("mouseup", () => (isMoving.right = false));
-
 // For touch devices
 
 document.getElementById("arrow-left").addEventListener("pointerdown", (e) => {
@@ -310,7 +267,7 @@ document.getElementById("arrow-left").addEventListener("touchstart", (e) => {
   e.preventDefault();
   isMoving.left = true;
 });
-document.getElementById("arrow-right").addEventListener("touchend", (e) => {
+document.getElementById("arrow-right").addEventListener("touchend ", (e) => {
   e.preventDefault();
   isMoving.right = true;
 });
