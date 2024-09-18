@@ -250,31 +250,11 @@ function checkCollision() {
   return false;
 }
 
-// Event listeners
-document.addEventListener("keydown", (event) => {
-  if (event.code === "Space") {
-    startCharging();
-  }
-});
-
-document.addEventListener("keyup", (event) => {
-  if (event.code === "Space") {
-    throwLotka();
-  }
-});
-
 const arrowUpButton = document.getElementById("arrow-up");
-
-arrowUpButton.addEventListener("mousedown", (event) => {
+arrowUpButton.addEventListener("touchstart", (event) => {
   event.preventDefault();
   isButtonPressed = true;
   startCharging();
-});
-
-arrowUpButton.addEventListener("mouseup", (event) => {
-  event.preventDefault();
-  isButtonPressed = false;
-  throwLotka();
 });
 
 arrowUpButton.addEventListener("pointerdown", (event) => {
@@ -288,9 +268,10 @@ arrowUpButton.addEventListener("pointerup", (event) => {
   isButtonPressed = false;
   throwLotka();
 });
-
-arrowUpButton.addEventListener("touchmove", (event) => {
+arrowUpButton.addEventListener("touchend", (event) => {
   event.preventDefault();
+  isButtonPressed = false;
+  throwLotka();
 });
 
 function init() {
