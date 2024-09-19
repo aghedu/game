@@ -235,7 +235,7 @@ function animate(timestamp) {
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
   if (score > 5) {
     setCookie(getCookie("vifon") == "true" ? "kebab" : "vifon", true);
-    location.href = "index.html";
+    window.location.replace("index.html");
     return;
   }
   updatePlayerPosition();

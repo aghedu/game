@@ -28,7 +28,7 @@ function setScore(newScore) {
   score = newScore;
   if (score == 5 && !stop) {
     setCookie(getCookie("ruskacz") == "true" ? "vodka" : "ruskacz", true);
-    location.href = "./index.html";
+    window.location.replace("./index.html");
     stop = true;
   }
 }

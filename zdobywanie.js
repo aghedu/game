@@ -327,7 +327,7 @@ function gameLoopFunction() {
       setCookie(getCookie("marlboro") == "true" ? "joint" : "marlboro", true);
       stopped = true;
       setTimeout(() => {
-        location.href = "index.html";
+        window.location.replace("index.html");
       }, 75);
     }
   }

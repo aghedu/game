@@ -98,10 +98,17 @@ function checkCollisions() {
           if (tile.type == 2 && !stop) {
             stop = true;
 
-            if (playerX < 200) location.href = "./flanki.html";
+            if (playerX < 200)
+              window.location.replace(
+                "https://aghedu.github.io/game/flanki.html"
+              );
             else if (playerY > 200 && playerX > 200)
-              location.href = "./zdobywanie.html";
-            else location.href = "./lapanie.html";
+              window.location.replace(
+                "https://aghedu.github.io/game/zdobywanie.html"
+              );
+            window.location.replace(
+              "https://aghedu.github.io/game/lapanie.html"
+            );
           }
         }
       }
