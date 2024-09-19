@@ -106,9 +106,10 @@ function checkCollisions() {
               window.location.replace(
                 "https://aghedu.github.io/game/zdobywanie.html"
               );
-            window.location.replace(
-              "https://aghedu.github.io/game/lapanie.html"
-            );
+            else
+              window.location.replace(
+                "https://aghedu.github.io/game/lapanie.html"
+              );
           }
         }
       }
@@ -140,6 +141,7 @@ function checkCollisions() {
 }
 function updatePlayerPosition() {
   if (stop) return;
+  console.log(playerX, playerY);
   // Apply acceleration
   if (isMoving.left) velocityX = Math.max(velocityX - acceleration, -maxSpeed);
   if (isMoving.right) velocityX = Math.min(velocityX + acceleration, maxSpeed);
