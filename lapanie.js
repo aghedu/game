@@ -97,7 +97,7 @@ resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
 function createFruit() {
-  const isBad = Math.random() < 0.7 && redFruitCount < maxRedFruits;
+  const isBad = Math.random() < 0.8 && redFruitCount < maxRedFruits;
   if (isBad) redFruitCount++;
 
   const imageArray = isBad ? badFruitImages : goodFruitImages;
@@ -112,7 +112,7 @@ function createFruit() {
     y: -100,
     width: width,
     height: height,
-    speed: Math.random() * 9 + (3 + hardmode * 2),
+    speed: Math.random() * (9 + hardmode) + (4 + hardmode),
     isBad: isBad,
     image: randomImage,
   };
