@@ -97,7 +97,7 @@ resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
 function createFruit() {
-  const isBad = Math.random() < 0.85 && redFruitCount < maxRedFruits;
+  const isBad = Math.random() < 0.8 && redFruitCount < maxRedFruits;
   if (isBad) redFruitCount++;
 
   const imageArray = isBad ? badFruitImages : goodFruitImages;
@@ -172,7 +172,7 @@ function moveFruits() {
     return true;
   });
 
-  if (Math.random() < 0.0375) {
+  if (Math.random() < 0.0325) {
     // 3% chance of creating a new fruit each frame
     fruits.push(createFruit());
   }
