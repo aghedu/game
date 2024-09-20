@@ -260,7 +260,14 @@ document.getElementById("arrow-left").addEventListener("pointerdown", (e) => {
 document.getElementById("arrow-right").addEventListener("pointerdown", (e) => {
   isMoving.right = true;
 });
-
+document.getElementById("arrow-left").addEventListener("touchend", (event) => {
+  event.preventDefault();
+  isMoving.left = false;
+});
+document.getElementById("arrow-right").addEventListener("touchend", (event) => {
+  event.preventDefault();
+  isMoving.right = false;
+});
 document
   .getElementById("arrow-left")
   .addEventListener("pointerup", () => (isMoving.left = false));
