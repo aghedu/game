@@ -172,7 +172,7 @@ function moveFruits() {
     return true;
   });
 
-  if (Math.random() < 0.035) {
+  if (Math.random() < 0.0375) {
     // 3% chance of creating a new fruit each frame
     fruits.push(createFruit());
   }
@@ -212,7 +212,7 @@ function checkCollisions() {
     if (
       playerX < fruit.x + fruit.width &&
       playerX + playerWidth > fruit.x &&
-      playerY < fruit.y + fruit.height &&
+      playerY < fruit.y &&
       playerY + playerHeight > fruit.y
     ) {
       if (fruit.isBad) {
