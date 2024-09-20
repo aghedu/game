@@ -82,8 +82,7 @@ function checkAllCookiesTrue() {
 function endGame() {
   canvas.style.display = "none";
   console.clear();
-  document.body.innerHTML =
-    "<h1>ZNAJDŹ ŹRÓDŁO</h1> <!--SZUKAJ W OKOLICY 49.438166, 20.721201-->";
+  document.body.innerHTML = "<h1>ZNAJDŹ ŹRÓDŁO</h1>";
 }
 
 function startGame() {
