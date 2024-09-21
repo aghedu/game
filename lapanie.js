@@ -1,4 +1,9 @@
 import { getCookie, setCookie } from "./cookies.js";
+import { reloadScript } from "./reload.js";
+
+function resetGame() {
+  reloadScript("lapanie.js");
+}
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -97,6 +102,7 @@ resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
 function createFruit() {
+  console.log(audio);
   const isBad = Math.random() < 0.75 && redFruitCount < maxRedFruits;
   if (isBad) redFruitCount++;
 
@@ -219,7 +225,7 @@ function checkCollisions() {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         if (!stop) {
           window.setTimeout(() => {
-            location.reload();
+            resetGame();
           }, 1000);
         }
         stop = true;

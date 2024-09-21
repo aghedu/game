@@ -1,4 +1,5 @@
 import { getCookie, setCookie } from "./cookies.js";
+import { reloadScript } from "./reload.js";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -305,7 +306,7 @@ function update() {
     player.y = cameraY + canvas.height - player.height; // Position the player at the bottom of the screen
     setTimeout(() => {
       cancelAnimationFrame(gameLoop);
-      if (!stopGame) location.reload();
+      if (!stopGame) reloadScript("zdobywanie.js");
       stopGame = true;
     }, 200); // Show rzyg1.png for 2 seconds before reloading
   }

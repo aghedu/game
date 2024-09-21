@@ -9,15 +9,8 @@ import {
 } from "./cookies.js";
 
 let itemImages = [];
-
-/* 
-setCookie("ruskacz", false);
-setCookie("vodka", false);
-setCookie("vifon", false);
-setCookie("kebab", false);
-setCookie("marlboro", false);
-setCookie("joint", false);
-*/
+let backgroundMusic;
+let hasInteracted = false;
 
 function loadImages() {
   const imageNames = [
@@ -83,10 +76,46 @@ function endGame() {
   canvas.style.display = "none";
   console.clear();
   document.body.innerHTML = "<h1>ZNAJDŹ ŹRÓDŁO</h1>";
+  if (backgroundMusic) {
+    backgroundMusic.pause();
+    localStorage.removeItem("musicStartTime");
+  }
+}
+
+function initAudio() {
+  backgroundMusic = document.getElementById("background-music");
+  backgroundMusic.volume = 0.5; // Set volume to 50%
+
+  // Set up event listener to update localStorage with current time
+  backgroundMusic.addEventListener("timeupdate", () => {
+    localStorage.setItem("musicCurrentTime", backgroundMusic.currentTime);
+  });
+
+  // Check if we have a stored start time
+  const storedTime = localStorage.getItem("musicCurrentTime");
+  if (storedTime) {
+    backgroundMusic.currentTime = parseFloat(storedTime);
+  }
+}
+
+function startAudio() {
+  if (backgroundMusic && backgroundMusic.paused && !hasInteracted) {
+    backgroundMusic
+      .play()
+      .then(() => {
+        console.log("Audio started");
+        hasInteracted = true;
+        if (!localStorage.getItem("musicStartTime")) {
+          localStorage.setItem("musicStartTime", Date.now().toString());
+        }
+      })
+      .catch((error) => console.log("Audio play failed:", error));
+  }
 }
 
 function startGame() {
   loadImages();
+  initAudio();
   animate();
 
   // Check for all cookies being true every second
@@ -96,7 +125,28 @@ function startGame() {
       setTimeout(endGame, 1000);
     }
   }, 1000);
+
+  // Try to resume audio if it was playing before
+  const musicStartTime = localStorage.getItem("musicStartTime");
+  if (musicStartTime) {
+    const elapsedTime = (Date.now() - parseInt(musicStartTime)) / 1000;
+    backgroundMusic.currentTime = elapsedTime % backgroundMusic.duration;
+    startAudio();
+  }
 }
+
+// Add event listeners for various user interactions
+const interactionEvents = [
+  "click",
+  "touchstart",
+  "keydown",
+  "mousedown",
+  "pointerdown",
+];
+
+interactionEvents.forEach((eventType) => {
+  document.addEventListener(eventType, startAudio, { once: true });
+});
 
 startGame();
 

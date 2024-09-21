@@ -7,7 +7,9 @@
 body {
   overflow: hidden;
 }
-
+.playing {
+  color: green; /* Example style to indicate playing */
+}
 #canvas-container {
   width: 100vw;
   height: 100vh;

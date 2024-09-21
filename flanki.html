@@ -14,5 +14,19 @@
       <button id="arrow-up" class="arrow-button"></button>
     </div>
     <script type="module" src="./flanki.js"></script>
+    <script>
+      const audio = new Audio("sounds/flanki.mp3");
+      let hasInteracted = false;
+      document.addEventListener("click", playAudio);
+      document.addEventListener("keydown", playAudio);
+      document.addEventListener("touchstart", playAudio);
+      function playAudio() {
+        if (!hasInteracted) {
+          audio.volume = 0.1;
+          audio.play();
+          hasInteracted = true;
+        }
+      }
+    </script>
   </body>
 </html>

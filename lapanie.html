@@ -14,6 +14,24 @@
       <button id="arrow-left" class="arrow-button"></button>
       <button id="arrow-right" class="arrow-button"></button>
     </div>
+    <audio id="background-music" loop>
+      <source src="sounds/lapanie.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
     <script type="module" src="lapanie.js"></script>
+    <script>
+      const audio = new Audio("sounds/lapanie.mp3");
+      let hasInteracted = false;
+      document.addEventListener("click", playAudio);
+      document.addEventListener("keydown", playAudio);
+      document.addEventListener("touchstart", playAudio);
+      function playAudio() {
+        if (!hasInteracted) {
+          audio.volume = 0.1;
+          audio.play();
+          hasInteracted = true;
+        }
+      }
+    </script>
   </body>
 </html>
