@@ -217,6 +217,7 @@ function updatePlayerPosition() {
 }
 
 function checkCollisions() {
+  if (score > 5) return;
   fruits.forEach((fruit, index) => {
     if (
       playerX < fruit.x + fruit.width &&
@@ -228,7 +229,6 @@ function checkCollisions() {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         if (!stop) {
           wrongSound.play();
-
           window.setTimeout(() => {
             resetGame();
           }, 1000);
