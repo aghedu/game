@@ -11,6 +11,7 @@ import {
 let itemImages = [];
 let backgroundMusic;
 let hasInteracted = false;
+const successSound = new Audio("sounds/success.mp3");
 
 function loadImages() {
   const imageNames = [
@@ -81,7 +82,6 @@ function endGame() {
     localStorage.removeItem("musicStartTime");
   }
 }
-
 function initAudio() {
   backgroundMusic = document.getElementById("background-music");
   backgroundMusic.volume = 0.5; // Set volume to 50%

@@ -3,7 +3,9 @@ import { reloadScript } from "./reload.js";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-
+const vomitSound = new Audio("sounds/vomit.mp3");
+const gulpSound = new Audio("sounds/gulp.mp3");
+const successSound = new Audio("sounds/success_bell.mp3");
 // Game variables
 let hardmode = getCookie("marlboro") == "true" ? 1 : 0;
 let player = {
@@ -282,6 +284,7 @@ function update() {
 
   if (shouldJump && !gameFrozen && !jumpedPlatforms.has(jumpedPlatform)) {
     gameFrozen = true;
+    gulpSound.play();
     freezeTimer = 13; // ~200ms at 60fps
     freezeStage = 1;
     player.state = "szot1";
@@ -301,6 +304,7 @@ function update() {
 
   if (player.y > cameraY + canvas.height && !gameFrozen) {
     gameFrozen = true;
+    vomitSound.play();
     player.state = "rzyg1";
     player.velocityY = 0; // Stop the player
     player.y = cameraY + canvas.height - player.height; // Position the player at the bottom of the screen
@@ -308,7 +312,7 @@ function update() {
       cancelAnimationFrame(gameLoop);
       if (!stopGame) reloadScript("zdobywanie.js");
       stopGame = true;
-    }, 200); // Show rzyg1.png for 2 seconds before reloading
+    }, 1000); // Show rzyg1.png for 2 seconds before reloading
   }
 
   player.frame += Math.abs(player.velocityX) > 0.1 ? 5 : 1;
@@ -327,9 +331,10 @@ function gameLoopFunction() {
     if (!stopped) {
       setCookie(getCookie("marlboro") == "true" ? "joint" : "marlboro", true);
       stopped = true;
+      successSound.play();
       setTimeout(() => {
         window.location.replace("index.html");
-      }, 75);
+      }, 1000);
     }
   }
   update();

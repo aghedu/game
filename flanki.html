@@ -20,6 +20,8 @@
       document.addEventListener("click", playAudio);
       document.addEventListener("keydown", playAudio);
       document.addEventListener("touchstart", playAudio);
+      document.addEventListener("pointerdown", playAudio);
+
       function playAudio() {
         if (!hasInteracted) {
           audio.volume = 0.1;

@@ -13,7 +13,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 let score = 0;
-
+const successSound = new Audio("sounds/success-bell.mp3");
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -21,14 +21,21 @@ function resizeCanvas() {
   ctx.webkitImageSmoothingEnabled = false;
   ctx.imageSmoothingEnabled = false;
 }
+setScore(4);
+const wrongSound = new Audio("sounds/wrong.mp3");
 let stop = false;
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 function setScore(newScore) {
+  if (newScore == 0) wrongSound.play();
+
   score = newScore;
   if (score == 5 && !stop) {
     setCookie(getCookie("ruskacz") == "true" ? "vodka" : "ruskacz", true);
-    window.location.replace("./index.html");
+    window.setInterval(() => {
+      window.location.replace("./index.html");
+    }, 1000);
+
     stop = true;
   }
 }

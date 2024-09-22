@@ -4,7 +4,10 @@ import { reloadScript } from "./reload.js";
 function resetGame() {
   reloadScript("lapanie.js");
 }
-
+const wrongSound = new Audio("sounds/kurwa.mp3");
+const correctSound = new Audio("sounds/correct.mp3");
+correctSound.volume = 0.35;
+const successSound = new Audio("sounds/success_bell.mp3");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const container = document.getElementById("canvas-container");
@@ -224,12 +227,15 @@ function checkCollisions() {
       if (fruit.isBad) {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         if (!stop) {
+          wrongSound.play();
+
           window.setTimeout(() => {
             resetGame();
           }, 1000);
         }
         stop = true;
       } else {
+        correctSound.play();
         score++;
         fruits.splice(index, 1);
       }
@@ -241,7 +247,11 @@ function animate(timestamp) {
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
   if (score > 5) {
     setCookie(getCookie("vifon") == "true" ? "kebab" : "vifon", true);
-    window.location.replace("index.html");
+    cancelAnimationFrame(animate);
+    successSound.play();
+    window.setInterval(() => {
+      window.location.replace("index.html");
+    }, 1000);
     return;
   }
   updatePlayerPosition();

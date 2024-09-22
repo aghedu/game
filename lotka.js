@@ -1,6 +1,7 @@
 import { canvas, ctx, setScore, score } from "./flanki.js";
 import { startHarnasFlip, getHarnasDimensions } from "./harnas.js";
 import { getCookie } from "./cookies.js";
+
 let hardmode = getCookie("ruskacz") == "true" ? 1 : 0;
 let start = false;
 let angle = 0;
@@ -34,6 +35,10 @@ let offScreenCtx;
 
 let lotkaRotation = 0;
 const lotkaRotationSpeed = 0.1;
+
+// New Audio object for collision sound
+const collisionSound = new Audio("sounds/metallic-clang.mp3");
+const wrongSound = new Audio("sounds/wrong.mp3");
 
 function startCharging() {
   if (!isCharging && !isLotkaThrown) {
@@ -78,7 +83,6 @@ function animateArrow() {
   const arrowWidth = maxSize;
   const arrowHeight = (arrowImage.height / arrowImage.width) * arrowWidth;
 
-  // Calculate the arrow's position based on the lotka's position
   const arrowX = lotkaX + (lotkaImage.width * lotkaScaleFactor) / 2;
   const arrowY = canvas.height - (lotkaImage.height * lotkaScaleFactor) / 2;
 
@@ -86,7 +90,6 @@ function animateArrow() {
   ctx.translate(arrowX, arrowY);
   ctx.rotate(angle);
 
-  // Draw the normal arrow
   offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
   offScreenCtx.drawImage(arrowImage, 0, 0);
   ctx.drawImage(
@@ -101,7 +104,6 @@ function animateArrow() {
     const chargeTime = Math.min(Date.now() - chargeStartTime, maxChargeTime);
     const chargeProgress = chargeTime / maxChargeTime;
 
-    // Draw the orange arrow with increasing opacity
     ctx.globalAlpha = chargeProgress;
     ctx.drawImage(
       arrowOrangeImage,
@@ -115,7 +117,6 @@ function animateArrow() {
 
   ctx.restore();
 
-  // Animate arrow rotation
   if (increasing) {
     angle += rotationSpeed;
     if (angle >= Math.PI / 1.5) {
@@ -130,7 +131,7 @@ function animateArrow() {
 
   angle = Math.max(-Math.PI / 2, Math.min(Math.PI / 1.5, angle));
 }
-
+const successSound = new Audio("sounds/success_bell.mp3");
 function calculateXOffset(score) {
   return ((score + 0.3) * canvas.width) / 8;
 }
@@ -147,12 +148,10 @@ function animateLotka() {
     lotkaRotation += lotkaRotationSpeed;
 
     if (lotkaY > canvas.height || lotkaX > canvas.width) {
-      setScore(0);
       resetLotka();
     }
   }
 
-  // Draw the rotated lotka
   ctx.save();
   ctx.translate(
     lotkaX + (lotkaImage.width * lotkaScaleFactor) / 2,
@@ -243,8 +242,13 @@ function checkCollision() {
 
   if (collision) {
     startHarnasFlip();
+    if (score + 1 < 5) collisionSound.play();
+    else successSound.play();
     setScore(score + 1);
     resetLotka();
+
+    // Play the collision sound
+
     return true;
   }
   return false;
