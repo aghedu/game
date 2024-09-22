@@ -21,7 +21,6 @@ function resizeCanvas() {
   ctx.webkitImageSmoothingEnabled = false;
   ctx.imageSmoothingEnabled = false;
 }
-setScore(4);
 const wrongSound = new Audio("sounds/wrong.mp3");
 let stop = false;
 resizeCanvas();
