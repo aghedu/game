@@ -60,7 +60,7 @@ let grassImage;
 function loadBackgroundImages() {
   for (let i = 0; i <= maxBackgrounds; i++) {
     const img = new Image();
-    img.src = `pietra/pietro_${i}.jpg`;
+    img.src = `pietra${hardmode}/pietro_${i}.jpg`;
     backgroundImages.push(img);
   }
 }
