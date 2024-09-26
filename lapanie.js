@@ -250,7 +250,6 @@ function animate(timestamp) {
   drawPlayer();
   drawFruits();
   moveFruits();
-  checkCollisions();
   ctx.font = "bold 24px Arial";
   ctx.fillStyle = "white";
   ctx.strokeStyle = "black";
@@ -263,8 +262,10 @@ function animate(timestamp) {
     window.setInterval(() => {
       window.location.replace("index.html");
     }, 1000);
+    cancelAnimationFrame(animate);
     return;
   }
+  checkCollisions();
   requestAnimationFrame(animate);
 }
 
