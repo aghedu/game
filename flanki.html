@@ -21,6 +21,7 @@
       document.addEventListener("keydown", playAudio);
       document.addEventListener("touchstart", playAudio);
       document.addEventListener("pointerdown", playAudio);
+      document.addEventListener("devicemotion", playAudio);
 
       function playAudio() {
         if (!hasInteracted) {

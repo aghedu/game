@@ -142,6 +142,7 @@ const interactionEvents = [
   "keydown",
   "mousedown",
   "pointerdown",
+  "devicemotion",
 ];
 
 interactionEvents.forEach((eventType) => {
