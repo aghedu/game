@@ -245,15 +245,7 @@ function checkCollisions() {
 
 function animate(timestamp) {
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-  if (score > 5) {
-    fruits = [];
-    setCookie(getCookie("vifon") == "true" ? "kebab" : "vifon", true);
-    successSound.play();
-    window.setInterval(() => {
-      window.location.replace("index.html");
-    }, 1000);
-    return;
-  }
+
   updatePlayerPosition();
   drawPlayer();
   drawFruits();
@@ -265,7 +257,14 @@ function animate(timestamp) {
   ctx.lineWidth = 3;
   ctx.strokeText(`Ilość ECTS: ${score * 5} 🤓`, 10, 30);
   ctx.fillText(`Ilość ECTS: ${score * 5} 🤓`, 10, 30);
-
+  if (score > 5) {
+    setCookie(getCookie("vifon") == "true" ? "kebab" : "vifon", true);
+    successSound.play();
+    window.setInterval(() => {
+      window.location.replace("index.html");
+    }, 1000);
+    return;
+  }
   requestAnimationFrame(animate);
 }
 

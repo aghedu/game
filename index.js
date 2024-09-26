@@ -79,18 +79,23 @@ function endGame() {
   document.body.innerHTML = "<h1>ZNAJDŹ ŹRÓDŁO</h1>";
   if (backgroundMusic) {
     backgroundMusic.pause();
-    localStorage.removeItem("musicStartTime");
+    localStorage.removeItem("musicCurrentTime");
   }
 }
+
 function initAudio() {
   backgroundMusic = document.getElementById("background-music");
   backgroundMusic.volume = 0.5; // Set volume to 50%
+
   // Set up event listener to update localStorage with current time
   backgroundMusic.addEventListener("timeupdate", () => {
-    localStorage.setItem("musicCurrentTime", backgroundMusic.currentTime);
+    localStorage.setItem(
+      "musicCurrentTime",
+      backgroundMusic.currentTime.toString()
+    );
   });
 
-  // Check if we have a stored start time
+  // Check if we have a stored current time
   const storedTime = localStorage.getItem("musicCurrentTime");
   if (storedTime) {
     backgroundMusic.currentTime = parseFloat(storedTime);
@@ -98,17 +103,18 @@ function initAudio() {
 }
 
 function startAudio() {
-  if (backgroundMusic && backgroundMusic.paused && !hasInteracted) {
+  if (backgroundMusic && !hasInteracted) {
     backgroundMusic
       .play()
       .then(() => {
         console.log("Audio started");
         hasInteracted = true;
-        if (!localStorage.getItem("musicStartTime")) {
-          localStorage.setItem("musicStartTime", Date.now().toString());
-        }
       })
-      .catch((error) => console.log("Audio play failed:", error));
+      .catch((error) => {
+        console.log("Audio play failed:", error);
+        // Retry after a short delay
+        setTimeout(startAudio, 1000);
+      });
   }
 }
 
@@ -125,13 +131,8 @@ function startGame() {
     }
   }, 1000);
 
-  // Try to resume audio if it was playing before
-  const musicStartTime = localStorage.getItem("musicStartTime");
-  if (musicStartTime) {
-    const elapsedTime = (Date.now() - parseInt(musicStartTime)) / 1000;
-    backgroundMusic.currentTime = elapsedTime % backgroundMusic.duration;
-    startAudio();
-  }
+  // Try to resume audio
+  startAudio();
 }
 
 // Add event listeners for various user interactions
@@ -141,11 +142,17 @@ const interactionEvents = [
   "keydown",
   "mousedown",
   "pointerdown",
-  "devicemotion",
 ];
 
 interactionEvents.forEach((eventType) => {
   document.addEventListener(eventType, startAudio, { once: true });
+});
+
+// Add a visibility change listener to handle tab switching
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && hasInteracted) {
+    startAudio();
+  }
 });
 
 startGame();
