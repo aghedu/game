@@ -148,6 +148,7 @@ function animateLotka() {
     lotkaRotation += lotkaRotationSpeed;
 
     if (lotkaY > canvas.height || lotkaX > canvas.width) {
+      setScore(0);
       resetLotka();
     }
   }
