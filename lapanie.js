@@ -246,8 +246,8 @@ function checkCollisions() {
 function animate(timestamp) {
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
   if (score > 5) {
+    fruits = [];
     setCookie(getCookie("vifon") == "true" ? "kebab" : "vifon", true);
-    cancelAnimationFrame(animate);
     successSound.play();
     window.setInterval(() => {
       window.location.replace("index.html");

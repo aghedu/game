@@ -16,6 +16,7 @@
     <script type="module" src="./flanki.js"></script>
     <script>
       const audio = new Audio("sounds/flanki.mp3");
+      audio.loop = true;
       let hasInteracted = false;
       document.addEventListener("click", playAudio);
       document.addEventListener("keydown", playAudio);

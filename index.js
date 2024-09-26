@@ -85,7 +85,6 @@ function endGame() {
 function initAudio() {
   backgroundMusic = document.getElementById("background-music");
   backgroundMusic.volume = 0.5; // Set volume to 50%
-
   // Set up event listener to update localStorage with current time
   backgroundMusic.addEventListener("timeupdate", () => {
     localStorage.setItem("musicCurrentTime", backgroundMusic.currentTime);

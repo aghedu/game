@@ -21,6 +21,7 @@
     <script type="module" src="lapanie.js"></script>
     <script>
       const audio = new Audio("sounds/lapanie.mp3");
+      audio.loop = true;
       let hasInteracted = false;
       document.addEventListener("click", playAudio);
       document.addEventListener("keydown", playAudio);
