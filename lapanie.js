@@ -121,7 +121,7 @@ function createFruit() {
     y: -100,
     width: width,
     height: height,
-    speed: Math.random() * (9 + hardmode) + (4 + hardmode),
+    speed: Math.random() * (9 + hardmode) + (4 + hardmode / 2),
     isBad: isBad,
     image: randomImage,
   };
@@ -238,6 +238,16 @@ function checkCollisions() {
         correctSound.play();
         score++;
         fruits.splice(index, 1);
+        if (score > 4) {
+          fruits = [];
+          setCookie(getCookie("vifon") == "true" ? "kebab" : "vifon", true);
+          successSound.play();
+          window.setInterval(() => {
+            window.location.replace("index.html");
+          }, 1000);
+          cancelAnimationFrame(animate);
+          return;
+        }
       }
     }
   });
@@ -245,7 +255,6 @@ function checkCollisions() {
 
 function animate(timestamp) {
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-
   updatePlayerPosition();
   drawPlayer();
   drawFruits();
@@ -256,15 +265,7 @@ function animate(timestamp) {
   ctx.lineWidth = 3;
   ctx.strokeText(`Ilość ECTS: ${score * 5} 🤓`, 10, 30);
   ctx.fillText(`Ilość ECTS: ${score * 5} 🤓`, 10, 30);
-  if (score > 5) {
-    setCookie(getCookie("vifon") == "true" ? "kebab" : "vifon", true);
-    successSound.play();
-    window.setInterval(() => {
-      window.location.replace("index.html");
-    }, 1000);
-    cancelAnimationFrame(animate);
-    return;
-  }
+
   checkCollisions();
   requestAnimationFrame(animate);
 }
