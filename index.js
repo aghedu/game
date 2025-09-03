@@ -126,7 +126,13 @@ function startGame() {
   // Initialize occasional glitch effects that do not disrupt gameplay
   try {
     const audio = document.getElementById("background-music");
-    initGlitches({ canvas, ctx, audio, minIntervalMs: 2000, maxIntervalMs: 5000 });
+    initGlitches({
+      canvas,
+      ctx,
+      audio,
+      minIntervalMs: 500,
+      maxIntervalMs: 5000,
+    });
   } catch (_) {}
   // Start fixed-timestep loop at 60 FPS for consistent behavior
   const FPS = 60;

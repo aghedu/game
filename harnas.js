@@ -17,9 +17,11 @@ let harnasX, harnasY;
 
 // New variables for hardmode movement
 let harnasDirection = 1; // 1 for right, -1 for left
-const harnasSpeed = 2; // Adjust this value to change the speed of movement
+// Slightly faster to make hits a bit harder
+const harnasSpeed = 2.0; // Adjust this value to change the speed of movement
 let startHarnasX; // Starting X position for hardmode movement
-const movementRange = 100; // Range of movement in pixels
+// Slightly wider range to reduce predictability
+const movementRange = 90; // Range of movement in pixels
 
 function easeInOutQuad(t) {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;

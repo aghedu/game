@@ -5,7 +5,8 @@ import { getCookie } from "./cookies.js";
 let hardmode = getCookie("ruskacz") == "true" ? 1 : 0;
 let start = false;
 let angle = 0;
-const rotationSpeed = 0.075 + hardmode * 0.03;
+// Make aiming a bit harder: slightly faster arrow sweep, more in hardmode
+const rotationSpeed = 0.082 + hardmode * 0.02;
 let increasing = true;
 const arrowImage = new Image();
 const arrowOrangeImage = new Image();
@@ -18,13 +19,14 @@ const lotkaScaleFactor = 0.13;
 let isGravityApplied = false;
 let gravityStartTime = 0;
 const gravityDelay = 30;
+// Slightly stronger gravity to make arc drop quicker (a bit harder)
 const gravity = 0.75;
 
 let isLotkaThrown = false;
 let lotkaVelocityX = 0;
 let lotkaVelocityY = 0;
 const minThrowSpeed = 0;
-const maxThrowSpeed = 30;
+const maxThrowSpeed = 32;
 
 let isCharging = false;
 let chargeStartTime = 0;
@@ -34,7 +36,7 @@ let offScreenCanvas;
 let offScreenCtx;
 
 let lotkaRotation = 0;
-const lotkaRotationSpeed = 0.1;
+const lotkaRotationSpeed = 0.12;
 
 // New Audio object for collision sound
 const collisionSound = new Audio("sounds/metallic-clang.mp3");
@@ -54,8 +56,8 @@ function initializeImages(callback) {
     imagesLoaded++;
     if (imagesLoaded === 3) {
       start = true;
-  // Ensure positions are set after images have dimensions
-  resetLotka();
+      // Ensure positions are set after images have dimensions
+      resetLotka();
       prepareArrowCanvas();
       callback();
     }
@@ -145,7 +147,10 @@ function animateLotka() {
     const leftBound = 10;
     const rightBound = canvas.width - w - 10;
     if (!Number.isFinite(lotkaX) || lotkaX < leftBound || lotkaX > rightBound) {
-      lotkaX = Math.max(leftBound, Math.min(rightBound, calculateXOffset(score)));
+      lotkaX = Math.max(
+        leftBound,
+        Math.min(rightBound, calculateXOffset(score))
+      );
     }
     lotkaY = canvas.height - (lotkaImage.height * lotkaScaleFactor || 100);
   }
@@ -186,8 +191,12 @@ function resetLotka() {
   isLotkaThrown = false;
   const xOffset = calculateXOffset(score);
   // Clamp to ensure visible on-screen at start
-  const w = (lotkaImage && lotkaImage.width ? lotkaImage.width : 100) * lotkaScaleFactor;
-  const h = (lotkaImage && lotkaImage.height ? lotkaImage.height : 100) * lotkaScaleFactor;
+  const w =
+    (lotkaImage && lotkaImage.width ? lotkaImage.width : 100) *
+    lotkaScaleFactor;
+  const h =
+    (lotkaImage && lotkaImage.height ? lotkaImage.height : 100) *
+    lotkaScaleFactor;
   lotkaX = Math.max(10, Math.min(canvas.width - w - 10, xOffset));
   lotkaY = canvas.height - h;
   lotkaVelocityX = 0;
@@ -220,8 +229,6 @@ function throwLotka() {
 
 function checkCollision() {
   const harnas = getHarnasDimensions();
-  harnas.width /= 2;
-  harnas.x += harnas.width / 2;
   const lotkaWidth = lotkaImage.width * lotkaScaleFactor;
   const lotkaHeight = lotkaImage.height * lotkaScaleFactor;
 
@@ -244,18 +251,40 @@ function checkCollision() {
     };
   });
 
-  const harnasLeft = harnas.x;
-  const harnasRight = harnas.x + harnas.width;
-  const harnasTop = harnas.y;
-  const harnasBottom = harnas.y + harnas.height;
+  // Compute axis-aligned bounding box of the rotated dart for robust overlap
+  let minX = Infinity,
+    minY = Infinity,
+    maxX = -Infinity,
+    maxY = -Infinity;
+  for (const c of corners) {
+    if (c.x < minX) minX = c.x;
+    if (c.y < minY) minY = c.y;
+    if (c.x > maxX) maxX = c.x;
+    if (c.y > maxY) maxY = c.y;
+  }
+  // Slightly smaller padding to make collisions stricter (harder)
+  const pad = 2;
+  const harnasLeft = harnas.x - pad;
+  const harnasRight = harnas.x + harnas.width + pad;
+  const harnasTop = harnas.y - pad;
+  const harnasBottom = harnas.y + harnas.height + pad;
 
-  const collision = corners.some(
+  const aabbOverlap =
+    maxX > harnasLeft &&
+    minX < harnasRight &&
+    maxY > harnasTop &&
+    minY < harnasBottom;
+
+  // Fallback OR: any corner inside (extra safety)
+  const cornerInside = corners.some(
     (corner) =>
       corner.x > harnasLeft &&
       corner.x < harnasRight &&
       corner.y > harnasTop &&
       corner.y < harnasBottom
   );
+
+  const collision = aabbOverlap || cornerInside;
 
   if (collision) {
     startHarnasFlip();

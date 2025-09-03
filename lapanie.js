@@ -23,6 +23,10 @@ let score = -3 * hardmode;
 let stop = false;
 let rafId = null;
 let gameOverTime = null; // ** NEW: Timestamp for when the game ends **
+let won = false; // ** NEW: Victory state **
+let victoryTime = null; // ** NEW: Timestamp for when the game is won **
+const VICTORY_DELAY_MS = 1500; // ** NEW: Delay before navigating after win **
+let victoryTimeoutId = null; // ** NEW: One-shot timeout for navigation **
 
 const FPS = 60;
 const STEP = 1000 / FPS;
@@ -39,7 +43,7 @@ const goodFruitImages = [],
   badFruitImages = [];
 let background;
 let velocityX = 0,
-  maxSpeed = 15,
+  maxSpeed = 16,
   acceleration = 0.9,
   deceleration = 0.9;
 let isMoving = { left: false, right: false };
@@ -111,7 +115,7 @@ function resizeCanvas() {
 window.addEventListener("resize", resizeCanvas);
 
 function createFruit() {
-  const isBad = Math.random() < 0.75 && redFruitCount < maxRedFruits;
+  const isBad = Math.random() < 0.65 && redFruitCount < maxRedFruits;
   if (isBad) redFruitCount++;
   const imageArray = isBad ? badFruitImages : goodFruitImages;
   const randomImage = imageArray[Math.floor(Math.random() * imageArray.length)];
@@ -122,7 +126,7 @@ function createFruit() {
     y: -100,
     width,
     height,
-    speed: Math.random() * (9 + hardmode) + (4 + hardmode / 2),
+    speed: Math.random() * (8.6 + hardmode * 0.9) + (3.9 + hardmode / 2.2),
     isBad,
     image: randomImage,
   };
@@ -152,7 +156,7 @@ function moveFruits() {
     }
     return true;
   });
-  if (Math.random() < 0.0325) fruits.push(createFruit());
+  if (Math.random() < 0.03) fruits.push(createFruit());
 }
 
 function checkCollisions() {
@@ -174,15 +178,19 @@ function checkCollisions() {
         correctSound.play();
         score++;
         fruits.splice(i, 1);
-        if (score > 4) {
-          stop = true;
+        if (score * 5 >= 30 && !won) {
+          // Ensure victory always displays 30 ECTS
+          if (score < 6) score = 6;
+          won = true;
+          victoryTime = performance.now();
           fruits = [];
           setCookie(getCookie("vifon") == "true" ? "kebab" : "vifon", true);
           successSound.play();
-          // We can use setTimeout here because navigation doesn't conflict with the loop
-          window.setTimeout(() => {
-            window.location.replace("index.html");
-          }, 1000);
+          if (!victoryTimeoutId) {
+            victoryTimeoutId = setTimeout(() => {
+              window.location.replace("index.html");
+            }, VICTORY_DELAY_MS);
+          }
         }
       }
     }
@@ -190,6 +198,7 @@ function checkCollisions() {
 }
 
 function update() {
+  if (won) return; // Freeze gameplay on win
   updatePlayerPosition();
   moveFruits();
   checkCollisions();
@@ -198,6 +207,35 @@ function update() {
 function draw() {
   if (stop) {
     ctx.drawImage(gameOverImg, 0, 0, canvas.width, canvas.height);
+    return;
+  }
+  if (won) {
+    // Winner view: background + player + score (no fruits)
+    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+    ctx.save();
+    if (playerDirection === -1) {
+      ctx.scale(-1, 1);
+      ctx.translate(-playerX - playerWidth, 0);
+    } else {
+      ctx.translate(playerX, 0);
+    }
+    const currentImages = playerImages.standing;
+    const currentFrame = 0;
+    ctx.drawImage(
+      currentImages[currentFrame],
+      0,
+      playerY,
+      playerWidth,
+      playerHeight
+    );
+    ctx.restore();
+    ctx.font = "bold 24px Arial";
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 3;
+  const ectsWin = Math.max(30, score * 5);
+  ctx.strokeText(`Ilość ECTS: ${ectsWin} 🤓`, 10, 30);
+  ctx.fillText(`Ilość ECTS: ${ectsWin} 🤓`, 10, 30);
     return;
   }
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
@@ -237,7 +275,7 @@ function draw() {
   ctx.fillText(`Ilość ECTS: ${score * 5} 🤓`, 10, 30);
   // Apply a gentle visual-only glitch overlay after rendering
   try {
-    applyGlitchIfNeeded(ctx, canvas);
+    if (!won) applyGlitchIfNeeded(ctx, canvas);
   } catch (_) {}
 }
 
@@ -249,6 +287,7 @@ function mainLoop(now) {
       return; // Stop this final frame.
     }
   }
+  // Win navigation handled by a one-time timeout
 
   acc += now - last;
   last = now;
@@ -293,7 +332,7 @@ try {
   initGlitchesLight({
     canvas,
     ctx,
-    minIntervalMs: 1000,
+    minIntervalMs: 500,
     maxIntervalMs: 4000,
     effects: {
       blockCopy: true,

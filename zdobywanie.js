@@ -21,13 +21,15 @@ let player = {
   animationSpeed: 30,
   state: "normal", // Can be 'normal', 'szot1', 'szot2', 'rzyg1'
 };
-const width = 80 - hardmode * 10;
+// Slightly wider platforms
+const width = 84 - hardmode * 8;
 const height = 20;
 let platforms = [];
 let stopGame = false;
 let score = 0;
 let gameLoop;
-let tiltSensitivity = 0.5;
+// Gentler tilt
+let tiltSensitivity = 0.45;
 let cameraY = 0;
 let gameFrozen = false;
 let freezeTimer = 0;
@@ -127,14 +129,15 @@ function setupCanvas() {
 function pushNewPlatform(newY) {
   if (platforms.length < 15) {
     let speedMultiplier =
-      Math.max(1, (canvas.height - newY) / canvas.height) / 2;
+      Math.max(1, (canvas.height - newY) / canvas.height) / 2.2;
     let newWidth = width + Math.random() * 30;
     platforms.push({
       x: Math.random() * (canvas.width - newWidth),
       y: newY,
       width: newWidth,
       height,
-      velocityX: 2 + 2 * hardmode + Math.random() * 5 * +speedMultiplier,
+      // Slightly slower platforms
+      velocityX: 1.8 + 1.8 * hardmode + Math.random() * 4.5 * +speedMultiplier,
     });
   }
 }
@@ -354,10 +357,10 @@ function init() {
     initGlitchesLight({
       canvas,
       ctx,
-  minIntervalMs: 1000,
-  maxIntervalMs: 4000,
-  effects: { stutter: true },
-  audio: window.pageAudio,
+      minIntervalMs: 500,
+      maxIntervalMs: 4000,
+      effects: { stutter: true },
+      audio: window.pageAudio,
     });
   } catch (_) {}
   // Start fixed-timestep loop at 60 FPS
