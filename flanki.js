@@ -39,10 +39,7 @@ function setScore(newScore) {
   }
 }
 function animate() {
-  if (!start) {
-    requestAnimationFrame(animate);
-    return;
-  }
+  if (!start) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   animateBackground();
@@ -72,12 +69,28 @@ function animate() {
     35
   );
 
-  requestAnimationFrame(animate);
 }
 
 function init() {
   initHarnas(); // Initialize harnas position
-  animate();
+  // Start fixed-timestep loop at 60 FPS for consistency across devices
+  const FPS = 60;
+  const STEP = 1000 / FPS;
+  let last;
+  let acc = 0;
+  function frame(now) {
+    if (last === undefined) last = now;
+    acc += now - last;
+    last = now;
+    if (acc > 1000) acc = 1000;
+    let safety = 0;
+    while (acc >= STEP && safety++ < 5) {
+      animate();
+      acc -= STEP;
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 }
 
 init();

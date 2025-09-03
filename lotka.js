@@ -132,8 +132,9 @@ function animateArrow() {
   angle = Math.max(-Math.PI / 2, Math.min(Math.PI / 1.5, angle));
 }
 const successSound = new Audio("sounds/success_bell.mp3");
-function calculateXOffset(score) {
-  return ((score + 0.3) * canvas.width) / 8;
+function calculateXOffset(s) {
+  const safeScore = Number.isFinite(s) ? s : 0; // handle undefined during circular import
+  return ((safeScore + 0.3) * canvas.width) / 8;
 }
 
 function animateLotka() {

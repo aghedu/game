@@ -58,7 +58,6 @@ function animate() {
   animateTiles();
   animatePlayer();
   renderItems();
-  requestAnimationFrame(animate);
 }
 
 function checkAllCookiesTrue() {
@@ -121,7 +120,30 @@ function startAudio() {
 function startGame() {
   loadImages();
   initAudio();
-  animate();
+  // Start fixed-timestep loop at 60 FPS for consistent behavior
+  const FPS = 60;
+  const STEP = 1000 / FPS;
+  let last = undefined;
+  let acc = 0;
+  let rafId;
+
+  function frame(now) {
+    if (last === undefined) last = now;
+    acc += now - last;
+    last = now;
+
+    // Cap accumulator to avoid spiral of death on tab restores
+    if (acc > 1000) acc = 1000;
+
+    let safety = 0;
+    while (acc >= STEP && safety++ < 5) {
+      animate();
+      acc -= STEP;
+    }
+    rafId = requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
 
   // Check for all cookies being true every second
   const checkInterval = setInterval(() => {

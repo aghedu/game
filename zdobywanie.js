@@ -339,7 +339,6 @@ function gameLoopFunction() {
   }
   update();
   draw();
-  gameLoop = requestAnimationFrame(gameLoopFunction);
 }
 
 function init() {
@@ -347,7 +346,24 @@ function init() {
   createPlatforms();
   score = -1;
   currentBackgroundIndex = 0;
-  gameLoop = requestAnimationFrame(gameLoopFunction);
+  // Start fixed-timestep loop at 60 FPS
+  const FPS = 60;
+  const STEP = 1000 / FPS;
+  let last;
+  let acc = 0;
+  function frame(now) {
+    if (last === undefined) last = now;
+    acc += now - last;
+    last = now;
+    if (acc > 1000) acc = 1000;
+    let safety = 0;
+    while (acc >= STEP && safety++ < 5) {
+      gameLoopFunction();
+      acc -= STEP;
+    }
+    gameLoop = requestAnimationFrame(frame);
+  }
+  gameLoop = requestAnimationFrame(frame);
 }
 
 loadPlayerImages();

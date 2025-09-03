@@ -253,7 +253,7 @@ function checkCollisions() {
   });
 }
 
-function animate(timestamp) {
+function animate() {
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
   updatePlayerPosition();
   drawPlayer();
@@ -267,7 +267,6 @@ function animate(timestamp) {
   ctx.fillText(`Ilość ECTS: ${score * 5} 🤓`, 10, 30);
 
   checkCollisions();
-  requestAnimationFrame(animate);
 }
 
 // For touch devices
@@ -292,6 +291,25 @@ document
   .getElementById("arrow-right")
   .addEventListener("pointerup", () => (isMoving.right = false));
 
-animate();
+// Start fixed-timestep loop at 60 FPS for consistency across devices
+(() => {
+  const FPS = 60;
+  const STEP = 1000 / FPS;
+  let last;
+  let acc = 0;
+  function frame(now) {
+    if (last === undefined) last = now;
+    acc += now - last;
+    last = now;
+    if (acc > 1000) acc = 1000;
+    let safety = 0;
+    while (acc >= STEP && safety++ < 5) {
+      animate();
+      acc -= STEP;
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
 
 export { canvas, ctx, animate };
