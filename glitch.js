@@ -225,25 +225,25 @@ function initGlitches({
       } else if (roll < 0.35) {
         duration = rand(120, 220);
         effectFn = (c, cv) => blockCopy(c, cv, 8, 0.25);
-  if (audio && Math.random() < 0.35) audioStutter(audio, rand(140, 260));
+        if (audio && Math.random() < 0.35) audioStutter(audio, rand(140, 260));
       } else if (roll < 0.6) {
         duration = rand(130, 220);
         effectFn = (c, cv) => tearAndDisplace(c, cv, 12);
-  if (audio && Math.random() < 0.25) audioStutter(audio, rand(140, 240));
+        if (audio && Math.random() < 0.25) audioStutter(audio, rand(140, 240));
       } else if (roll < 0.85) {
         duration = rand(150, 260);
         effectFn = (c, cv) => {
           blockCopy(c, cv, 10, 0.28);
           if (Math.random() < 0.4) tearAndDisplace(c, cv, 14);
         };
-  if (audio && Math.random() < 0.3) audioStutter(audio, rand(160, 280));
+        if (audio && Math.random() < 0.3) audioStutter(audio, rand(160, 280));
       } else if (roll < 0.9) {
         duration = rand(150, 260);
         effectFn = (c, cv) => {
           tearAndDisplace(c, cv, 22);
           if (Math.random() < 0.5) chromaticAberration(c, cv, 5.5);
         };
-  if (audio && Math.random() < 0.4) audioStutter(audio, rand(180, 300));
+        if (audio && Math.random() < 0.4) audioStutter(audio, rand(180, 300));
       } else {
         duration = rand(170, 300);
         effectFn = (c, cv) => {
@@ -284,7 +284,7 @@ function initGlitchesLight({
     () => {
       const roll = Math.random();
       let duration;
-        if (opts.crt && roll > 0.998) {
+      if (opts.crt && roll > 0.998) {
         // Extremely rare small CRT-like nudge, no audio
         duration = rand(120, 220);
         effectFn = (c, cv) => {
@@ -341,33 +341,33 @@ function initGlitchesLight({
       } else if (roll < 0.4) {
         duration = rand(70, 130);
         effectFn = (c, cv) => blockCopy(c, cv, 4, 0.18);
-          if (audio && opts.stutter && Math.random() < 0.12)
-            audioStutter(audio, rand(120, 200));
+        if (audio && opts.stutter && Math.random() < 0.12)
+          audioStutter(audio, rand(120, 200));
       } else if (roll < 0.75) {
         duration = rand(70, 130);
         effectFn = (c, cv) => tearAndDisplace(c, cv, 6);
-          if (audio && opts.stutter && Math.random() < 0.1)
-            audioStutter(audio, rand(120, 180));
+        if (audio && opts.stutter && Math.random() < 0.1)
+          audioStutter(audio, rand(120, 180));
       } else {
         duration = rand(90, 150);
         effectFn = (c, cv) => {
           tearAndDisplace(c, cv, 10);
           if (Math.random() < 0.2) chromaticAberration(c, cv, 2.5);
         };
-          if (opts.chroma && opts.tear) {
-            if (audio && opts.stutter && Math.random() < 0.1)
-              audioStutter(audio, rand(140, 220));
-          } else if (opts.blockCopy) {
-            effectFn = (c, cv) => blockCopy(c, cv, 4, 0.15);
-            if (audio && opts.stutter && Math.random() < 0.12)
-              audioStutter(audio, rand(120, 200));
-          } else if (opts.tear) {
-            effectFn = (c, cv) => tearAndDisplace(c, cv, 6);
-            if (audio && opts.stutter && Math.random() < 0.1)
-              audioStutter(audio, rand(120, 180));
-          } else {
-            effectFn = () => {};
-          }
+        if (opts.chroma && opts.tear) {
+          if (audio && opts.stutter && Math.random() < 0.1)
+            audioStutter(audio, rand(140, 220));
+        } else if (opts.blockCopy) {
+          effectFn = (c, cv) => blockCopy(c, cv, 4, 0.15);
+          if (audio && opts.stutter && Math.random() < 0.12)
+            audioStutter(audio, rand(120, 200));
+        } else if (opts.tear) {
+          effectFn = (c, cv) => tearAndDisplace(c, cv, 6);
+          if (audio && opts.stutter && Math.random() < 0.1)
+            audioStutter(audio, rand(120, 180));
+        } else {
+          effectFn = () => {};
+        }
       }
       // Small chance to extend lightly
       if (Math.random() < 0.1) duration += rand(80, 200);
