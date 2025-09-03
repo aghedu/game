@@ -233,9 +233,9 @@ function draw() {
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
     ctx.lineWidth = 3;
-  const ectsWin = Math.max(30, score * 5);
-  ctx.strokeText(`Ilość ECTS: ${ectsWin} 🤓`, 10, 30);
-  ctx.fillText(`Ilość ECTS: ${ectsWin} 🤓`, 10, 30);
+    const ectsWin = Math.max(30, score * 5);
+    ctx.strokeText(`Ilość ECTS: ${ectsWin} 🤓`, 10, 30);
+    ctx.fillText(`Ilość ECTS: ${ectsWin} 🤓`, 10, 30);
     return;
   }
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);

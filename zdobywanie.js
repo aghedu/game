@@ -34,6 +34,10 @@ let cameraY = 0;
 let gameFrozen = false;
 let freezeTimer = 0;
 let freezeStage = 0; // 0: not frozen, 1: szot1, 2: szot2
+// iOS motion + fallback controls
+let motionEnabled = false;
+let isPressingLeft = false;
+let isPressingRight = false;
 
 // Movement variables
 let maxSpeed = 12;
@@ -248,6 +252,16 @@ function update() {
   // Apply deceleration
   player.velocityX *= deceleration;
 
+  // Fallback touch controls (if motion not enabled)
+  if (!motionEnabled) {
+    if (isPressingLeft) player.velocityX -= acceleration;
+    if (isPressingRight) player.velocityX += acceleration;
+    player.velocityX = Math.max(
+      -maxSpeed,
+      Math.min(maxSpeed, player.velocityX)
+    );
+  }
+
   // Update player position based on velocity
   player.x += player.velocityX;
 
@@ -357,8 +371,8 @@ function init() {
     initGlitchesLight({
       canvas,
       ctx,
-      minIntervalMs: 500,
-      maxIntervalMs: 4000,
+      minIntervalMs: 1000,
+      maxIntervalMs: 5000,
       effects: { stutter: true },
       audio: window.pageAudio,
     });
@@ -381,12 +395,123 @@ function init() {
     gameLoop = requestAnimationFrame(frame);
   }
   gameLoop = requestAnimationFrame(frame);
+
+  // iOS motion permission / fallback
+  setupMotionOrFallback();
 }
 
 loadPlayerImages();
 
 window.addEventListener("resize", setupCanvas);
+// Motion listeners are attached via setupMotionOrFallback
 
-if (window.DeviceMotionEvent) {
-  window.addEventListener("devicemotion", handleDeviceMotion, true);
+function setupMotionOrFallback() {
+  // If motion events exist
+  if (window.DeviceMotionEvent) {
+    // iOS 13+: requestPermission needed
+    if (typeof DeviceMotionEvent.requestPermission === "function") {
+      showMotionPrompt();
+    } else {
+      // Non-iOS or older: enable immediately
+      window.addEventListener("devicemotion", handleDeviceMotion, true);
+      motionEnabled = true;
+    }
+  } else {
+    // No motion API: fallback controls
+    addFallbackControls();
+  }
+}
+
+function showMotionPrompt() {
+  const overlay = document.createElement("div");
+  overlay.style.position = "fixed";
+  overlay.style.inset = "0";
+  overlay.style.background = "rgba(0,0,0,0.6)";
+  overlay.style.zIndex = "9999";
+  overlay.style.display = "flex";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+  overlay.style.color = "white";
+  overlay.style.font = "bold 18px Arial";
+  overlay.innerHTML = `
+    <div style="text-align:center">
+      <div>Włącz sterowanie ruchem, aby grać</div>
+      <button id="enable-motion" style="margin-top:12px;padding:10px 16px;font-size:16px">Zezwól</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  const btn = overlay.querySelector("#enable-motion");
+  const tryEnable = async () => {
+    try {
+      const res = await DeviceMotionEvent.requestPermission();
+      if (res === "granted") {
+        window.addEventListener("devicemotion", handleDeviceMotion, true);
+        motionEnabled = true;
+        overlay.remove();
+      } else {
+        overlay.remove();
+        addFallbackControls();
+      }
+    } catch (e) {
+      overlay.remove();
+      addFallbackControls();
+    }
+  };
+  btn.addEventListener("click", tryEnable, { once: true });
+  btn.addEventListener(
+    "touchstart",
+    (e) => {
+      e.preventDefault();
+      tryEnable();
+    },
+    { once: true, passive: false }
+  );
+}
+
+function addFallbackControls() {
+  // Create simple left/right touch zones
+  const left = document.createElement("div");
+  const right = document.createElement("div");
+  [left, right].forEach((el) => {
+    el.style.position = "fixed";
+    el.style.bottom = "0";
+    el.style.width = "50vw";
+    el.style.height = "22vh";
+    el.style.zIndex = "9998";
+    el.style.opacity = "0.0"; // Invisible zones
+  });
+  left.style.left = "0";
+  right.style.right = "0";
+  document.body.appendChild(left);
+  document.body.appendChild(right);
+
+  const onDownLeft = (e) => {
+    e.preventDefault();
+    isPressingLeft = true;
+  };
+  const onUpLeft = (e) => {
+    e.preventDefault();
+    isPressingLeft = false;
+  };
+  const onDownRight = (e) => {
+    e.preventDefault();
+    isPressingRight = true;
+  };
+  const onUpRight = (e) => {
+    e.preventDefault();
+    isPressingRight = false;
+  };
+
+  left.addEventListener("pointerdown", onDownLeft);
+  left.addEventListener("pointerup", onUpLeft);
+  left.addEventListener("pointercancel", onUpLeft);
+  left.addEventListener("touchstart", onDownLeft, { passive: false });
+  left.addEventListener("touchend", onUpLeft, { passive: false });
+  left.addEventListener("touchcancel", onUpLeft, { passive: false });
+
+  right.addEventListener("pointerdown", onDownRight);
+  right.addEventListener("pointerup", onUpRight);
+  right.addEventListener("pointercancel", onUpRight);
+  right.addEventListener("touchstart", onDownRight, { passive: false });
+  right.addEventListener("touchend", onUpRight, { passive: false });
+  right.addEventListener("touchcancel", onUpRight, { passive: false });
 }

@@ -31,7 +31,7 @@ function setScore(newScore) {
 
   score = newScore;
   if (score == 5 && !stop) {
-  setCookie(getCookie("piwo") == "true" ? "gorzala" : "piwo", true);
+    setCookie(getCookie("piwo") == "true" ? "gorzala" : "piwo", true);
     window.setInterval(() => {
       window.location.replace("./index.html");
     }, 1000);
