@@ -13,10 +13,10 @@
     <div class="arrow-buttons">
       <button id="arrow-up" class="arrow-button"></button>
     </div>
-    <script type="module" src="./flanki.js"></script>
     <script>
       const audio = new Audio("sounds/flanki.mp3");
       audio.loop = true;
+      window.pageAudio = audio;
       let hasInteracted = false;
       document.addEventListener("click", playAudio);
       document.addEventListener("keydown", playAudio);
@@ -32,5 +32,6 @@
         }
       }
     </script>
+  <script type="module" src="./flanki.js"></script>
   </body>
 </html>

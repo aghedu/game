@@ -117,16 +117,16 @@ mapImage.onload = () => {
       } else if (r == 255 && g == 255 && b == 255 && a == 255) {
         let isMonitorRed = 0;
         if (
-          (index == 140 && getCookie("ruskacz") == "true") ||
-          (index == 372 && getCookie("vifon") == "true") ||
-          (index == 3952 && getCookie("marlboro") == "true")
+          (index == 140 && getCookie("piwo") == "true") ||
+          (index == 372 && getCookie("zupka") == "true") ||
+          (index == 3952 && getCookie("fajki") == "true")
         )
           isMonitorRed = 1;
         let completed = false;
         if (
-          (index == 140 && getCookie("vodka") == "true") ||
-          (index == 372 && getCookie("kebab") == "true") ||
-          (index == 3952 && getCookie("joint") == "true")
+          (index == 140 && getCookie("gorzala") == "true") ||
+          (index == 372 && getCookie("kebs") == "true") ||
+          (index == 3952 && getCookie("blant") == "true")
         )
           completed = true;
 

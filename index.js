@@ -1,6 +1,7 @@
 import { canvas, ctx } from "./canvas.js";
 import { animatePlayer } from "./player.js";
 import { animateTiles } from "./tiles.js";
+import { initGlitches, applyGlitchIfNeeded } from "./glitch.js";
 import {
   getCookie,
   setCookie,
@@ -14,24 +15,25 @@ let hasInteracted = false;
 const successSound = new Audio("sounds/success.mp3");
 
 function loadImages() {
-  const imageNames = [
-    "ruskacz",
-    "vodka",
-    "vifon",
-    "kebab",
-    "marlboro",
-    "joint",
+  // Map new cookie keys to existing image filenames
+  const items = [
+    { cookie: "piwo", imageName: "ruskacz" },
+    { cookie: "gorzala", imageName: "vodka" },
+    { cookie: "zupka", imageName: "vifon" },
+    { cookie: "kebs", imageName: "kebab" },
+    { cookie: "fajki", imageName: "marlboro" },
+    { cookie: "blant", imageName: "joint" },
   ];
 
-  imageNames.forEach((name) => {
+  items.forEach(({ cookie, imageName }) => {
     const blankImg = new Image();
-    blankImg.src = `./items/blank/${name}_blank.png`;
-    itemImages.push({ name, blank: blankImg, normal: null });
+    blankImg.src = `./items/blank/${imageName}_blank.png`;
+    itemImages.push({ cookie, imageName, blank: blankImg, normal: null });
 
     const normalImg = new Image();
-    normalImg.src = `./items/normal/${name}.png`;
+    normalImg.src = `./items/normal/${imageName}.png`;
     normalImg.onload = () => {
-      const item = itemImages.find((item) => item.name === name);
+      const item = itemImages.find((i) => i.imageName === imageName);
       if (item) {
         item.normal = normalImg;
       }
@@ -45,7 +47,7 @@ function renderItems() {
   const spacing = 5; // Spacing between images
 
   itemImages.forEach((item) => {
-    const img = getCookie(item.name) == "true" ? item.normal : item.blank;
+    const img = getCookie(item.cookie) == "true" ? item.normal : item.blank;
     if (img) {
       ctx.drawImage(img, x, y, img.width, img.height);
       x += 32 + img.width / 2;
@@ -58,25 +60,19 @@ function animate() {
   animateTiles();
   animatePlayer();
   renderItems();
-  requestAnimationFrame(animate);
+  // Overlay glitch if active
+  applyGlitchIfNeeded(ctx, canvas);
 }
 
 function checkAllCookiesTrue() {
-  const cookieNames = [
-    "ruskacz",
-    "vodka",
-    "vifon",
-    "kebab",
-    "marlboro",
-    "joint",
-  ];
+  const cookieNames = ["piwo", "gorzala", "zupka", "kebs", "fajki", "blant"];
   return cookieNames.every((name) => getCookie(name) === "true");
 }
 
 function endGame() {
   canvas.style.display = "none";
   console.clear();
-  document.body.innerHTML = "<h1>ZNAJDŹ ŹRÓDŁO</h1>";
+  document.body.innerHTML = "<h1>WATERFALL</h1>";
   if (backgroundMusic) {
     backgroundMusic.pause();
     localStorage.removeItem("musicCurrentTime");
@@ -121,7 +117,41 @@ function startAudio() {
 function startGame() {
   loadImages();
   initAudio();
-  animate();
+  // Initialize occasional glitch effects that do not disrupt gameplay
+  try {
+    const audio = document.getElementById("background-music");
+    initGlitches({
+      canvas,
+      ctx,
+      audio,
+      minIntervalMs: 500,
+      maxIntervalMs: 5000,
+    });
+  } catch (_) {}
+  // Start fixed-timestep loop at 60 FPS for consistent behavior
+  const FPS = 60;
+  const STEP = 1000 / FPS;
+  let last = undefined;
+  let acc = 0;
+  let rafId;
+
+  function frame(now) {
+    if (last === undefined) last = now;
+    acc += now - last;
+    last = now;
+
+    // Cap accumulator to avoid spiral of death on tab restores
+    if (acc > 1000) acc = 1000;
+
+    let safety = 0;
+    while (acc >= STEP && safety++ < 5) {
+      animate();
+      acc -= STEP;
+    }
+    rafId = requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
 
   // Check for all cookies being true every second
   const checkInterval = setInterval(() => {

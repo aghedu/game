@@ -1,5 +1,6 @@
 import { getCookie, setCookie, changeItemState } from "./cookies.js";
 import { animateBackground } from "./background.js";
+import { initGlitchesLight, applyGlitchIfNeeded } from "./glitch.js";
 import { animateHarnas, initHarnas } from "./harnas.js";
 import {
   animateLotka,
@@ -8,7 +9,7 @@ import {
   checkCollision,
   resetLotka,
 } from "./lotka.js";
-let hardmode = getCookie("ruskacz") == "true" ? 1 : 0;
+let hardmode = getCookie("piwo") == "true" ? 1 : 0;
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
@@ -30,7 +31,7 @@ function setScore(newScore) {
 
   score = newScore;
   if (score == 5 && !stop) {
-    setCookie(getCookie("ruskacz") == "true" ? "vodka" : "ruskacz", true);
+  setCookie(getCookie("piwo") == "true" ? "gorzala" : "piwo", true);
     window.setInterval(() => {
       window.location.replace("./index.html");
     }, 1000);
@@ -39,10 +40,7 @@ function setScore(newScore) {
   }
 }
 function animate() {
-  if (!start) {
-    requestAnimationFrame(animate);
-    return;
-  }
+  if (!start) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   animateBackground();
@@ -51,6 +49,8 @@ function animate() {
 
   animateHarnas();
   checkCollision();
+  // Overlay glitch if active
+  applyGlitchIfNeeded(ctx, canvas);
   // Display score
   ctx.font = hardmode ? "bold 18px Arial" : "bold 24px Arial";
   ctx.fillStyle = "white";
@@ -71,13 +71,39 @@ function animate() {
     2,
     35
   );
-
-  requestAnimationFrame(animate);
 }
 
 function init() {
   initHarnas(); // Initialize harnas position
-  animate();
+  try {
+    // Lighter but a bit more frequent on Flanki
+    initGlitchesLight({
+      canvas,
+      ctx,
+      minIntervalMs: 1000,
+      maxIntervalMs: 4000,
+      effects: { stutter: true },
+      audio: window.pageAudio,
+    });
+  } catch (_) {}
+  // Start fixed-timestep loop at 60 FPS for consistency across devices
+  const FPS = 60;
+  const STEP = 1000 / FPS;
+  let last;
+  let acc = 0;
+  function frame(now) {
+    if (last === undefined) last = now;
+    acc += now - last;
+    last = now;
+    if (acc > 1000) acc = 1000;
+    let safety = 0;
+    while (acc >= STEP && safety++ < 5) {
+      animate();
+      acc -= STEP;
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 }
 
 init();

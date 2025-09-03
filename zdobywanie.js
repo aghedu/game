@@ -1,5 +1,6 @@
 import { getCookie, setCookie } from "./cookies.js";
 import { reloadScript } from "./reload.js";
+import { initGlitchesLight, applyGlitchIfNeeded } from "./glitch.js";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -7,7 +8,7 @@ const vomitSound = new Audio("sounds/vomit.mp3");
 const gulpSound = new Audio("sounds/gulp.mp3");
 const successSound = new Audio("sounds/success_bell.mp3");
 // Game variables
-let hardmode = getCookie("marlboro") == "true" ? 1 : 0;
+let hardmode = getCookie("fajki") == "true" ? 1 : 0;
 let player = {
   x: 0,
   y: 0,
@@ -20,13 +21,15 @@ let player = {
   animationSpeed: 30,
   state: "normal", // Can be 'normal', 'szot1', 'szot2', 'rzyg1'
 };
-const width = 80 - hardmode * 10;
+// Slightly wider platforms
+const width = 84 - hardmode * 6;
 const height = 20;
 let platforms = [];
 let stopGame = false;
 let score = 0;
 let gameLoop;
-let tiltSensitivity = 0.5;
+// Gentler tilt
+let tiltSensitivity = 0.45;
 let cameraY = 0;
 let gameFrozen = false;
 let freezeTimer = 0;
@@ -126,14 +129,15 @@ function setupCanvas() {
 function pushNewPlatform(newY) {
   if (platforms.length < 15) {
     let speedMultiplier =
-      Math.max(1, (canvas.height - newY) / canvas.height) / 2;
+      Math.max(1, (canvas.height - newY) / canvas.height) / 2.2;
     let newWidth = width + Math.random() * 30;
     platforms.push({
       x: Math.random() * (canvas.width - newWidth),
       y: newY,
       width: newWidth,
       height,
-      velocityX: 2 + 2 * hardmode + Math.random() * 5 * +speedMultiplier,
+      // Slightly slower platforms
+      velocityX: 1.8 + 1.6 * hardmode + Math.random() * 4.5 * +speedMultiplier,
     });
   }
 }
@@ -209,6 +213,8 @@ function draw() {
   });
 
   drawPlayer();
+  // Overlay glitch if active
+  applyGlitchIfNeeded(ctx, canvas);
 }
 
 function update() {
@@ -329,7 +335,7 @@ let stopped = false;
 function gameLoopFunction() {
   if (score > 13) {
     if (!stopped) {
-      setCookie(getCookie("marlboro") == "true" ? "joint" : "marlboro", true);
+      setCookie(getCookie("fajki") == "true" ? "blant" : "fajki", true);
       stopped = true;
       successSound.play();
       setTimeout(() => {
@@ -339,7 +345,6 @@ function gameLoopFunction() {
   }
   update();
   draw();
-  gameLoop = requestAnimationFrame(gameLoopFunction);
 }
 
 function init() {
@@ -347,7 +352,35 @@ function init() {
   createPlatforms();
   score = -1;
   currentBackgroundIndex = 0;
-  gameLoop = requestAnimationFrame(gameLoopFunction);
+  try {
+    // Lighter and rarer on Zdobywanie
+    initGlitchesLight({
+      canvas,
+      ctx,
+      minIntervalMs: 500,
+      maxIntervalMs: 4000,
+      effects: { stutter: true },
+      audio: window.pageAudio,
+    });
+  } catch (_) {}
+  // Start fixed-timestep loop at 60 FPS
+  const FPS = 60;
+  const STEP = 1000 / FPS;
+  let last;
+  let acc = 0;
+  function frame(now) {
+    if (last === undefined) last = now;
+    acc += now - last;
+    last = now;
+    if (acc > 1000) acc = 1000;
+    let safety = 0;
+    while (acc >= STEP && safety++ < 5) {
+      gameLoopFunction();
+      acc -= STEP;
+    }
+    gameLoop = requestAnimationFrame(frame);
+  }
+  gameLoop = requestAnimationFrame(frame);
 }
 
 loadPlayerImages();

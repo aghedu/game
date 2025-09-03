@@ -18,10 +18,10 @@
       <source src="sounds/lapanie.mp3" type="audio/mpeg" />
       Your browser does not support the audio element.
     </audio>
-    <script type="module" src="lapanie.js"></script>
     <script>
       const audio = new Audio("sounds/lapanie.mp3");
       audio.loop = true;
+      window.pageAudio = audio;
       let hasInteracted = false;
       document.addEventListener("click", playAudio);
       document.addEventListener("keydown", playAudio);
@@ -36,5 +36,6 @@
         }
       }
     </script>
+  <script type="module" src="lapanie.js"></script>
   </body>
 </html>
