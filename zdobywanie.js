@@ -5,7 +5,17 @@ import { initGlitchesLight, applyGlitchIfNeeded } from "./glitch.js";
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const vomitSound = new Audio("sounds/vomit.mp3");
-const gulpSound = new Audio("sounds/gulp.mp3");
+// Audio pool for rapid gulp sounds
+const GULP_SRC = "sounds/gulp.mp3";
+const gulpPool = Array.from({ length: 3 }, () => new Audio(GULP_SRC));
+let gulpIdx = 0;
+function playGulp() {
+  const a = gulpPool[gulpIdx++ % gulpPool.length];
+  try {
+    a.currentTime = 0;
+  } catch (_) {}
+  a.play();
+}
 const successSound = new Audio("sounds/success_bell.mp3");
 // Game variables
 let hardmode = getCookie("fajki") == "true" ? 1 : 0;
@@ -22,7 +32,7 @@ let player = {
   state: "normal", // Can be 'normal', 'szot1', 'szot2', 'rzyg1'
 };
 // Slightly wider platforms
-const width = 84 - hardmode * 6;
+const width = 80 - hardmode * 8;
 const height = 20;
 let platforms = [];
 let stopGame = false;
@@ -304,7 +314,7 @@ function update() {
 
   if (shouldJump && !gameFrozen && !jumpedPlatforms.has(jumpedPlatform)) {
     gameFrozen = true;
-    gulpSound.play();
+    playGulp();
     freezeTimer = 13; // ~200ms at 60fps
     freezeStage = 1;
     player.state = "szot1";

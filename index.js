@@ -72,7 +72,7 @@ function checkAllCookiesTrue() {
 function endGame() {
   canvas.style.display = "none";
   console.clear();
-  document.body.innerHTML = "<h1>WATERFALL</h1>";
+  document.body.innerHTML = "<h1>KOD TO: WATERFALL</h1>";
   if (backgroundMusic) {
     backgroundMusic.pause();
     localStorage.removeItem("musicCurrentTime");
