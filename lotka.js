@@ -54,7 +54,8 @@ function initializeImages(callback) {
     imagesLoaded++;
     if (imagesLoaded === 3) {
       start = true;
-      resetLotka();
+  // Ensure positions are set after images have dimensions
+  resetLotka();
       prepareArrowCanvas();
       callback();
     }
@@ -138,6 +139,17 @@ function calculateXOffset(s) {
 }
 
 function animateLotka() {
+  // Safety: ensure the dart is visible when not thrown yet
+  if (!isLotkaThrown) {
+    const w = lotkaImage.width * lotkaScaleFactor || 100;
+    const leftBound = 10;
+    const rightBound = canvas.width - w - 10;
+    if (!Number.isFinite(lotkaX) || lotkaX < leftBound || lotkaX > rightBound) {
+      lotkaX = Math.max(leftBound, Math.min(rightBound, calculateXOffset(score)));
+    }
+    lotkaY = canvas.height - (lotkaImage.height * lotkaScaleFactor || 100);
+  }
+
   if (isLotkaThrown) {
     lotkaX += lotkaVelocityX;
     lotkaY += lotkaVelocityY;
@@ -173,8 +185,11 @@ function animateLotka() {
 function resetLotka() {
   isLotkaThrown = false;
   const xOffset = calculateXOffset(score);
-  lotkaX = xOffset;
-  lotkaY = canvas.height - lotkaImage.height * lotkaScaleFactor;
+  // Clamp to ensure visible on-screen at start
+  const w = (lotkaImage && lotkaImage.width ? lotkaImage.width : 100) * lotkaScaleFactor;
+  const h = (lotkaImage && lotkaImage.height ? lotkaImage.height : 100) * lotkaScaleFactor;
+  lotkaX = Math.max(10, Math.min(canvas.width - w - 10, xOffset));
+  lotkaY = canvas.height - h;
   lotkaVelocityX = 0;
   lotkaVelocityY = 0;
   isGravityApplied = false;

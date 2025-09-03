@@ -1,5 +1,6 @@
 import { getCookie, setCookie } from "./cookies.js";
 import { reloadScript } from "./reload.js";
+import { initGlitchesLight, applyGlitchIfNeeded } from "./glitch.js";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -209,6 +210,8 @@ function draw() {
   });
 
   drawPlayer();
+  // Overlay glitch if active
+  applyGlitchIfNeeded(ctx, canvas);
 }
 
 function update() {
@@ -346,6 +349,17 @@ function init() {
   createPlatforms();
   score = -1;
   currentBackgroundIndex = 0;
+  try {
+    // Lighter and rarer on Zdobywanie
+    initGlitchesLight({
+      canvas,
+      ctx,
+  minIntervalMs: 1000,
+  maxIntervalMs: 4000,
+  effects: { stutter: true },
+  audio: window.pageAudio,
+    });
+  } catch (_) {}
   // Start fixed-timestep loop at 60 FPS
   const FPS = 60;
   const STEP = 1000 / FPS;

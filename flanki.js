@@ -1,5 +1,6 @@
 import { getCookie, setCookie, changeItemState } from "./cookies.js";
 import { animateBackground } from "./background.js";
+import { initGlitchesLight, applyGlitchIfNeeded } from "./glitch.js";
 import { animateHarnas, initHarnas } from "./harnas.js";
 import {
   animateLotka,
@@ -48,6 +49,8 @@ function animate() {
 
   animateHarnas();
   checkCollision();
+  // Overlay glitch if active
+  applyGlitchIfNeeded(ctx, canvas);
   // Display score
   ctx.font = hardmode ? "bold 18px Arial" : "bold 24px Arial";
   ctx.fillStyle = "white";
@@ -68,11 +71,21 @@ function animate() {
     2,
     35
   );
-
 }
 
 function init() {
   initHarnas(); // Initialize harnas position
+  try {
+    // Lighter but a bit more frequent on Flanki
+    initGlitchesLight({
+      canvas,
+      ctx,
+      minIntervalMs: 1000,
+      maxIntervalMs: 4000,
+      effects: { stutter: true },
+      audio: window.pageAudio,
+    });
+  } catch (_) {}
   // Start fixed-timestep loop at 60 FPS for consistency across devices
   const FPS = 60;
   const STEP = 1000 / FPS;

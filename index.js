@@ -1,6 +1,7 @@
 import { canvas, ctx } from "./canvas.js";
 import { animatePlayer } from "./player.js";
 import { animateTiles } from "./tiles.js";
+import { initGlitches, applyGlitchIfNeeded } from "./glitch.js";
 import {
   getCookie,
   setCookie,
@@ -58,6 +59,8 @@ function animate() {
   animateTiles();
   animatePlayer();
   renderItems();
+  // Overlay glitch if active
+  applyGlitchIfNeeded(ctx, canvas);
 }
 
 function checkAllCookiesTrue() {
@@ -120,6 +123,11 @@ function startAudio() {
 function startGame() {
   loadImages();
   initAudio();
+  // Initialize occasional glitch effects that do not disrupt gameplay
+  try {
+    const audio = document.getElementById("background-music");
+    initGlitches({ canvas, ctx, audio, minIntervalMs: 2000, maxIntervalMs: 5000 });
+  } catch (_) {}
   // Start fixed-timestep loop at 60 FPS for consistent behavior
   const FPS = 60;
   const STEP = 1000 / FPS;
