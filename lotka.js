@@ -2,7 +2,7 @@ import { canvas, ctx, setScore, score } from "./flanki.js";
 import { startHarnasFlip, getHarnasDimensions } from "./harnas.js";
 import { getCookie } from "./cookies.js";
 
-let hardmode = getCookie("ruskacz") == "true" ? 1 : 0;
+let hardmode = getCookie("piwo") == "true" ? 1 : 0;
 let start = false;
 let angle = 0;
 // Make aiming a bit harder: slightly faster arrow sweep, more in hardmode

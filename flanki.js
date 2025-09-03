@@ -9,7 +9,7 @@ import {
   checkCollision,
   resetLotka,
 } from "./lotka.js";
-let hardmode = getCookie("ruskacz") == "true" ? 1 : 0;
+let hardmode = getCookie("piwo") == "true" ? 1 : 0;
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
@@ -31,7 +31,7 @@ function setScore(newScore) {
 
   score = newScore;
   if (score == 5 && !stop) {
-    setCookie(getCookie("ruskacz") == "true" ? "vodka" : "ruskacz", true);
+  setCookie(getCookie("piwo") == "true" ? "gorzala" : "piwo", true);
     window.setInterval(() => {
       window.location.replace("./index.html");
     }, 1000);

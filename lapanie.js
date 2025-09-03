@@ -18,7 +18,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 // --- Game State and Loop Variables ---
-let hardmode = getCookie("vifon") == "true" ? 1 : 0;
+let hardmode = getCookie("zupka") == "true" ? 1 : 0;
 let score = -3 * hardmode;
 let stop = false;
 let rafId = null;
@@ -184,7 +184,7 @@ function checkCollisions() {
           won = true;
           victoryTime = performance.now();
           fruits = [];
-          setCookie(getCookie("vifon") == "true" ? "kebab" : "vifon", true);
+          setCookie(getCookie("zupka") == "true" ? "kebs" : "zupka", true);
           successSound.play();
           if (!victoryTimeoutId) {
             victoryTimeoutId = setTimeout(() => {

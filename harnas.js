@@ -1,7 +1,7 @@
 import { canvas, ctx } from "./flanki.js";
 import { getCookie } from "./cookies.js";
 
-let hardmode = getCookie("ruskacz") == "true" ? 1 : 0;
+let hardmode = getCookie("piwo") == "true" ? 1 : 0;
 const harnasImage = new Image();
 harnasImage.src = "./harnas.png";
 const harnasScaleFactor = 0.15;

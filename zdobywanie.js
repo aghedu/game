@@ -8,7 +8,7 @@ const vomitSound = new Audio("sounds/vomit.mp3");
 const gulpSound = new Audio("sounds/gulp.mp3");
 const successSound = new Audio("sounds/success_bell.mp3");
 // Game variables
-let hardmode = getCookie("marlboro") == "true" ? 1 : 0;
+let hardmode = getCookie("fajki") == "true" ? 1 : 0;
 let player = {
   x: 0,
   y: 0,
@@ -22,7 +22,7 @@ let player = {
   state: "normal", // Can be 'normal', 'szot1', 'szot2', 'rzyg1'
 };
 // Slightly wider platforms
-const width = 84 - hardmode * 8;
+const width = 84 - hardmode * 6;
 const height = 20;
 let platforms = [];
 let stopGame = false;
@@ -137,7 +137,7 @@ function pushNewPlatform(newY) {
       width: newWidth,
       height,
       // Slightly slower platforms
-      velocityX: 1.8 + 1.8 * hardmode + Math.random() * 4.5 * +speedMultiplier,
+      velocityX: 1.8 + 1.6 * hardmode + Math.random() * 4.5 * +speedMultiplier,
     });
   }
 }
@@ -335,7 +335,7 @@ let stopped = false;
 function gameLoopFunction() {
   if (score > 13) {
     if (!stopped) {
-      setCookie(getCookie("marlboro") == "true" ? "joint" : "marlboro", true);
+      setCookie(getCookie("fajki") == "true" ? "blant" : "fajki", true);
       stopped = true;
       successSound.play();
       setTimeout(() => {
