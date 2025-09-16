@@ -9,9 +9,7 @@ import {
   checkCollision,
   resetLotka,
 } from "./lotka.js";
-// Hardmode only after beating normal: piwo=true and not yet completed (gorzala!=true)
-let hardmode =
-  getCookie("piwo") == "true" && getCookie("gorzala") != "true" ? 1 : 0;
+let hardmode = getCookie("piwo") == "true" ? 1 : 0;
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
@@ -78,13 +76,13 @@ function animate() {
 function init() {
   initHarnas(); // Initialize harnas position
   try {
-    // Disable visual glitches on Flanki to avoid vibrations
+    // Lighter but a bit more frequent on Flanki
     initGlitchesLight({
       canvas,
       ctx,
       minIntervalMs: 1000,
       maxIntervalMs: 4000,
-      effects: { blockCopy: false, tear: false, chroma: false, crt: false, stutter: false },
+      effects: { stutter: true },
       audio: window.pageAudio,
     });
   } catch (_) {}

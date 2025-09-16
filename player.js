@@ -227,6 +227,21 @@ document
 document
   .getElementById("arrow-down")
   .addEventListener("mouseup", () => (isMoving.down = false));
+
+// Prevent context menu on long-press (mobile) and right-click
+["arrow-left", "arrow-right", "arrow-up", "arrow-down"].forEach((id) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener("contextmenu", (e) => e.preventDefault());
+  // Prevent default touch behavior that can trigger haptics/scrolling
+  el.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.cancelable) e.preventDefault();
+    },
+    { passive: false }
+  );
+});
 document.addEventListener("keydown", (e) => {
   resetMoving();
   if (e.key === "ArrowLeft") {
@@ -287,6 +302,15 @@ document
 document
   .getElementById("arrow-down")
   .addEventListener("pointerup", () => (isMoving.down = false));
+
+// Handle pointer cancellation (e.g., OS gesture or interruption)
+["arrow-left", "arrow-right", "arrow-up", "arrow-down"].forEach((id) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener("pointercancel", () => {
+    resetMoving();
+  });
+});
 
 document.addEventListener("pointerup", () => {
   resetMoving();

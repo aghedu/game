@@ -15,36 +15,22 @@
     </div>
     <script>
       const audio = new Audio("sounds/flanki.mp3");
-      audio.preload = "auto";
       audio.loop = true;
       window.pageAudio = audio;
       let hasInteracted = false;
+      document.addEventListener("click", playAudio);
+      document.addEventListener("keydown", playAudio);
+      document.addEventListener("touchstart", playAudio);
+      document.addEventListener("pointerdown", playAudio);
+      document.addEventListener("devicemotion", playAudio);
 
-      function startAudio() {
-        if (!audio) return;
-        audio.volume = 0.1;
-        audio
-          .play()
-          .then(() => (hasInteracted = true))
-          .catch(() => {/* wait for next user gesture */});
+      function playAudio() {
+        if (!hasInteracted) {
+          audio.volume = 0.1;
+          audio.play();
+          hasInteracted = true;
+        }
       }
-
-      const interactionEvents = [
-        "click",
-        "keydown",
-        "touchstart",
-        "pointerdown",
-        "devicemotion",
-      ];
-      const tryStart = () => { if (!hasInteracted) startAudio(); };
-      interactionEvents.forEach((e) => document.addEventListener(e, tryStart, { passive: true }));
-
-      document.addEventListener("visibilitychange", () => {
-        if (!document.hidden && hasInteracted) startAudio();
-      });
-      window.addEventListener("pageshow", () => {
-        if (hasInteracted) startAudio();
-      });
     </script>
     <script type="module" src="./flanki.js"></script>
   </body>

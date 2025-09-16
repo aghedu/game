@@ -92,7 +92,6 @@ function scheduleRandom(fn, minMs, maxMs) {
 }
 
 let glitchActiveUntil = 0;
-let suppressUntil = 0; // NEW: window to suppress glitches (e.g., right after user input)
 let effectFn = null;
 let tmpCanvas = null;
 let tmpCtx = null;
@@ -196,9 +195,10 @@ function blockCopy(ctx, canvas, maxBlocks = 6, maxOffsetRatio = 0.2) {
 
 function applyGlitchIfNeeded(ctx, canvas) {
   if (!ctx || !canvas) return;
-  const now = performance.now();
-  if (now < suppressUntil) return; // Skip glitches during suppression
-  if (now <= glitchActiveUntil && typeof effectFn === "function") {
+  if (
+    performance.now() <= glitchActiveUntil &&
+    typeof effectFn === "function"
+  ) {
     try {
       effectFn(ctx, canvas);
     } catch (_) {}
@@ -379,7 +379,3 @@ function initGlitchesLight({
 }
 
 export { initGlitches, initGlitchesLight, applyGlitchIfNeeded };
-// NEW: allow pages to temporarily suppress glitches, e.g., right after input
-export function suppressGlitchesFor(ms = 1000) {
-  suppressUntil = Math.max(suppressUntil, performance.now() + Math.max(0, ms));
-}

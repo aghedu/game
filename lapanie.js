@@ -11,21 +11,8 @@ function resetGame() {
   reloadScript("lapanie.js");
 }
 const wrongSound = new Audio("sounds/kurwa.mp3");
-// Audio pool for rapid, distinct catch sounds
-const CORRECT_SRC = "sounds/correct.mp3";
-const correctPool = Array.from({ length: 4 }, () => {
-  const a = new Audio(CORRECT_SRC);
-  a.volume = 0.35;
-  return a;
-});
-let correctIdx = 0;
-function playCorrect() {
-  const a = correctPool[correctIdx++ % correctPool.length];
-  try {
-    a.currentTime = 0;
-  } catch (_) {}
-  a.play();
-}
+const correctSound = new Audio("sounds/correct.mp3");
+correctSound.volume = 0.35;
 const successSound = new Audio("sounds/success_bell.mp3");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -188,7 +175,7 @@ function checkCollisions() {
           gameOverTime = performance.now(); // ** NEW: Set the death timestamp **
         }
       } else {
-        playCorrect();
+        correctSound.play();
         score++;
         fruits.splice(i, 1);
         if (score * 5 >= 30 && !won) {
