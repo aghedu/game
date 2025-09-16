@@ -23,18 +23,35 @@
       audio.loop = true;
       window.pageAudio = audio;
       let hasInteracted = false;
-      document.addEventListener("click", playAudio);
-      document.addEventListener("keydown", playAudio);
-      document.addEventListener("touchstart", playAudio);
-      document.addEventListener("devicemotion", playAudio);
 
-      function playAudio() {
-        if (!hasInteracted) {
-          audio.volume = 0.075;
-          audio.play();
-          hasInteracted = true;
-        }
+      function startAudio() {
+        if (!audio) return;
+        audio.volume = 0.075;
+        audio
+          .play()
+          .then(() => (hasInteracted = true))
+          .catch(() => setTimeout(startAudio, 800));
       }
+
+      const interactionEvents = [
+        "click",
+        "keydown",
+        "touchstart",
+        "pointerdown",
+        "devicemotion",
+      ];
+      interactionEvents.forEach((e) =>
+        document.addEventListener(e, () => {
+          if (!hasInteracted) startAudio();
+        }, { once: true })
+      );
+
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && hasInteracted) startAudio();
+      });
+      window.addEventListener("pageshow", () => {
+        if (hasInteracted) startAudio();
+      });
     </script>
     <script type="module" src="lapanie.js"></script>
   </body>

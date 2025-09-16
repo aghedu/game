@@ -31,15 +31,16 @@ let player = {
   animationSpeed: 30,
   state: "normal", // Can be 'normal', 'szot1', 'szot2', 'rzyg1'
 };
-// Slightly wider platforms
-const width = 80 - hardmode * 8;
+// Slightly narrower platforms in hardmode
+const width = 80 - hardmode * 14;
 const height = 20;
 let platforms = [];
 let stopGame = false;
 let score = 0;
 let gameLoop;
 // Gentler tilt
-let tiltSensitivity = 0.45;
+// Slightly more sensitive tilt in hardmode
+let tiltSensitivity = 0.45 + 0.08 * hardmode;
 let cameraY = 0;
 let gameFrozen = false;
 let freezeTimer = 0;
@@ -150,8 +151,8 @@ function pushNewPlatform(newY) {
       y: newY,
       width: newWidth,
       height,
-      // Slightly slower platforms
-      velocityX: 1.8 + 1.6 * hardmode + Math.random() * 4.5 * +speedMultiplier,
+      // Slightly faster platforms in hardmode
+      velocityX: 1.8 + 2.2 * hardmode + Math.random() * 4.5 * +speedMultiplier,
     });
   }
 }

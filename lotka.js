@@ -2,11 +2,13 @@ import { canvas, ctx, setScore, score } from "./flanki.js";
 import { startHarnasFlip, getHarnasDimensions } from "./harnas.js";
 import { getCookie } from "./cookies.js";
 
-let hardmode = getCookie("piwo") == "true" ? 1 : 0;
+// Hardmode only if piwo=true and gorzala!=true (not yet completed)
+let hardmode =
+  getCookie("piwo") == "true" && getCookie("gorzala") != "true" ? 1 : 0;
 let start = false;
 let angle = 0;
-// Make aiming a bit harder: slightly faster arrow sweep, more in hardmode
-const rotationSpeed = 0.086 + hardmode * 0.024;
+// Slightly harder on hardmode: a touch faster sweep
+const rotationSpeed = 0.086 + hardmode * 0.03;
 let increasing = true;
 const arrowImage = new Image();
 const arrowOrangeImage = new Image();
@@ -19,8 +21,8 @@ const lotkaScaleFactor = 0.13;
 let isGravityApplied = false;
 let gravityStartTime = 0;
 const gravityDelay = 30;
-// Slightly stronger gravity to make arc drop quicker (a bit harder)
-const gravity = 0.8;
+// Slightly stronger gravity in hardmode
+const gravity = 0.8 + 0.06 * hardmode;
 
 let isLotkaThrown = false;
 let lotkaVelocityX = 0;
@@ -30,13 +32,15 @@ const maxThrowSpeed = 32;
 
 let isCharging = false;
 let chargeStartTime = 0;
-const maxChargeTime = 900;
+// Slightly shorter charge window in hardmode
+const maxChargeTime = 900 - 80 * hardmode;
 
 let offScreenCanvas;
 let offScreenCtx;
 
 let lotkaRotation = 0;
-const lotkaRotationSpeed = 0.12;
+// Slightly faster spin on hardmode
+const lotkaRotationSpeed = 0.12 + 0.02 * hardmode;
 
 // New Audio object for collision sound
 const collisionSound = new Audio("sounds/metallic-clang.mp3");
