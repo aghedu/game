@@ -21,20 +21,21 @@
     <script>
       const audio = new Audio("sounds/lapanie.mp3");
       audio.loop = true;
+      audio.volume = 0.075;
       window.pageAudio = audio;
       let hasInteracted = false;
-      document.addEventListener("click", playAudio);
-      document.addEventListener("keydown", playAudio);
-      document.addEventListener("touchstart", playAudio);
-      document.addEventListener("devicemotion", playAudio);
-
-      function playAudio() {
-        if (!hasInteracted) {
-          audio.volume = 0.075;
-          audio.play();
-          hasInteracted = true;
-        }
-      }
+      const tryPlay = () => {
+        if (hasInteracted) return;
+        audio
+          .play()
+          .then(() => (hasInteracted = true))
+          .catch(() => {
+            // Some browsers need a direct user gesture; we'll try again on next event
+          });
+      };
+      ["click", "keydown", "touchstart", "pointerdown", "devicemotion"].forEach((ev) =>
+        document.addEventListener(ev, tryPlay, { once: false })
+      );
     </script>
     <script type="module" src="lapanie.js"></script>
   </body>

@@ -5,17 +5,7 @@ import { initGlitchesLight, applyGlitchIfNeeded } from "./glitch.js";
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const vomitSound = new Audio("sounds/vomit.mp3");
-// Audio pool for rapid gulp sounds
-const GULP_SRC = "sounds/gulp.mp3";
-const gulpPool = Array.from({ length: 3 }, () => new Audio(GULP_SRC));
-let gulpIdx = 0;
-function playGulp() {
-  const a = gulpPool[gulpIdx++ % gulpPool.length];
-  try {
-    a.currentTime = 0;
-  } catch (_) {}
-  a.play();
-}
+const gulpSound = new Audio("sounds/gulp.mp3");
 const successSound = new Audio("sounds/success_bell.mp3");
 // Game variables
 let hardmode = getCookie("fajki") == "true" ? 1 : 0;
@@ -31,16 +21,15 @@ let player = {
   animationSpeed: 30,
   state: "normal", // Can be 'normal', 'szot1', 'szot2', 'rzyg1'
 };
-// Slightly narrower platforms in hardmode
-const width = 80 - hardmode * 14;
+// Slightly wider platforms
+const width = 80 - hardmode * 8;
 const height = 20;
 let platforms = [];
 let stopGame = false;
 let score = 0;
 let gameLoop;
 // Gentler tilt
-// Slightly more sensitive tilt in hardmode
-let tiltSensitivity = 0.45 + 0.08 * hardmode;
+let tiltSensitivity = 0.45;
 let cameraY = 0;
 let gameFrozen = false;
 let freezeTimer = 0;
@@ -151,8 +140,8 @@ function pushNewPlatform(newY) {
       y: newY,
       width: newWidth,
       height,
-      // Slightly faster platforms in hardmode
-      velocityX: 1.8 + 2.2 * hardmode + Math.random() * 4.5 * +speedMultiplier,
+      // Slightly slower platforms
+      velocityX: 1.8 + 1.6 * hardmode + Math.random() * 4.5 * +speedMultiplier,
     });
   }
 }
@@ -315,7 +304,7 @@ function update() {
 
   if (shouldJump && !gameFrozen && !jumpedPlatforms.has(jumpedPlatform)) {
     gameFrozen = true;
-    playGulp();
+    gulpSound.play();
     freezeTimer = 13; // ~200ms at 60fps
     freezeStage = 1;
     player.state = "szot1";

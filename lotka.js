@@ -301,11 +301,15 @@ function checkCollision() {
 }
 
 const arrowUpButton = document.getElementById("arrow-up");
-arrowUpButton.addEventListener("touchstart", (event) => {
-  event.preventDefault();
-  isButtonPressed = true;
-  startCharging();
-});
+arrowUpButton.addEventListener(
+  "touchstart",
+  (event) => {
+    if (event.cancelable) event.preventDefault();
+    isButtonPressed = true;
+    startCharging();
+  },
+  { passive: false }
+);
 
 arrowUpButton.addEventListener("pointerdown", (event) => {
   event.preventDefault();
@@ -322,6 +326,12 @@ arrowUpButton.addEventListener("touchend", (event) => {
   event.preventDefault();
   isButtonPressed = false;
   throwLotka();
+});
+
+// Extra: suppress context menu and handle pointer cancellation
+arrowUpButton.addEventListener("contextmenu", (e) => e.preventDefault());
+arrowUpButton.addEventListener("pointercancel", () => {
+  isButtonPressed = false;
 });
 
 function init() {

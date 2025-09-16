@@ -45,6 +45,12 @@ body {
   align-items: center;
   transition: all 0.3s ease;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  /* Disable long-press callout/haptics and default gestures */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
 }
 
 .arrow-button:hover {

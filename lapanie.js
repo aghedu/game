@@ -324,6 +324,24 @@ document.getElementById("arrow-right").addEventListener("touchend", (e) => {
   isMoving.right = false;
 });
 
+// Suppress long-press haptics and default gestures on mobile
+;["arrow-left", "arrow-right"].forEach((id) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener("contextmenu", (e) => e.preventDefault());
+  el.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.cancelable) e.preventDefault();
+    },
+    { passive: false }
+  );
+  el.addEventListener("pointercancel", () => {
+    isMoving.left = false;
+    isMoving.right = false;
+  });
+});
+
 // --- Initialize ---
 resizeCanvas();
 loadImages();
