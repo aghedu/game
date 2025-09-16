@@ -33,8 +33,8 @@
             // Some browsers need a direct user gesture; we'll try again on next event
           });
       };
-      ["click", "keydown", "touchstart", "pointerdown", "devicemotion"].forEach((ev) =>
-        document.addEventListener(ev, tryPlay, { once: false })
+      ["click", "keydown", "touchstart", "pointerdown", "devicemotion"].forEach(
+        (ev) => document.addEventListener(ev, tryPlay, { once: false })
       );
     </script>
     <script type="module" src="lapanie.js"></script>

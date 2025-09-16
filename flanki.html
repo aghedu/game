@@ -26,8 +26,8 @@
           .then(() => (hasInteracted = true))
           .catch(() => {});
       };
-      ["click", "keydown", "touchstart", "pointerdown", "devicemotion"].forEach((ev) =>
-        document.addEventListener(ev, tryPlay)
+      ["click", "keydown", "touchstart", "pointerdown", "devicemotion"].forEach(
+        (ev) => document.addEventListener(ev, tryPlay)
       );
     </script>
     <script type="module" src="./flanki.js"></script>

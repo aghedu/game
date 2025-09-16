@@ -325,7 +325,7 @@ document.getElementById("arrow-right").addEventListener("touchend", (e) => {
 });
 
 // Suppress long-press haptics and default gestures on mobile
-;["arrow-left", "arrow-right"].forEach((id) => {
+["arrow-left", "arrow-right"].forEach((id) => {
   const el = document.getElementById(id);
   if (!el) return;
   el.addEventListener("contextmenu", (e) => e.preventDefault());

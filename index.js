@@ -76,7 +76,10 @@ function endGame() {
   // Calculate elapsed time since the run started
   const startCookie = getCookie("runStartTimeMs");
   const startMs = startCookie ? parseInt(startCookie, 10) : Date.now();
-  const elapsedMs = Math.max(0, Date.now() - (isNaN(startMs) ? Date.now() : startMs));
+  const elapsedMs = Math.max(
+    0,
+    Date.now() - (isNaN(startMs) ? Date.now() : startMs)
+  );
   // Persist last run time for reference
   try {
     setCookie("lastRunTimeMs", String(elapsedMs));
