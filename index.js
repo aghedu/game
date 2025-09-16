@@ -7,6 +7,7 @@ import {
   setCookie,
   changeItemState,
   itemStates,
+  deleteCookie,
 } from "./cookies.js";
 
 let itemImages = [];
@@ -72,11 +73,75 @@ function checkAllCookiesTrue() {
 function endGame() {
   canvas.style.display = "none";
   console.clear();
-  document.body.innerHTML = "<h1>KOD TO: WATERFALL</h1>";
+  // Calculate elapsed time since the run started
+  const startCookie = getCookie("runStartTimeMs");
+  const startMs = startCookie ? parseInt(startCookie, 10) : Date.now();
+  const elapsedMs = Math.max(0, Date.now() - (isNaN(startMs) ? Date.now() : startMs));
+  // Persist last run time for reference
+  try {
+    setCookie("lastRunTimeMs", String(elapsedMs));
+  } catch (_) {}
+
+  const pretty = formatDuration(elapsedMs);
+  document.body.innerHTML = `
+    <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:16px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;">
+      <h1 style="font-size:2rem;">KOD TO: WATERFALL</h1>
+      <h2 style="font-size:1.5rem;">Twój czas to: ${pretty}</h2>
+      <button id="reset-run" style="margin-top:8px;padding:10px 16px;font-size:1rem;border-radius:8px;border:none;background:#0d6efd;color:#fff;cursor:pointer;">Zresetuj</button>
+    </div>
+  `;
   if (backgroundMusic) {
     backgroundMusic.pause();
     localStorage.removeItem("musicCurrentTime");
   }
+  // Wire reset button to clear cookies and reload to start
+  const btn = document.getElementById("reset-run");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      try {
+        resetAllGameCookies();
+      } catch (_) {}
+      // Also clear the saved music position
+      localStorage.removeItem("musicCurrentTime");
+      // Reload to the main index
+      window.location.replace("https://aghedu.github.io/game/");
+    });
+  }
+}
+
+function formatDuration(ms) {
+  const totalSec = Math.floor(ms / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  const pad = (n) => String(n).padStart(2, "0");
+  if (h > 0) return `${h}h ${pad(m)}m ${pad(s)}s`;
+  return `${m}m ${pad(s)}s`;
+}
+
+// Clear all game-related cookies (items, flags, timers)
+function resetAllGameCookies() {
+  const keys = [
+    // Canonical item keys
+    "piwo",
+    "gorzala",
+    "zupka",
+    "kebs",
+    "fajki",
+    "blant",
+    // Legacy keys (for safety)
+    "ruskacz",
+    "vodka",
+    "vifon",
+    "kebab",
+    "marlboro",
+    "joint",
+    // Timer/flags
+    "runStartTimeMs",
+    "lastRunTimeMs",
+    "cookiesRenamedV2",
+  ];
+  keys.forEach((k) => deleteCookie(k));
 }
 
 function initAudio() {
@@ -117,6 +182,12 @@ function startAudio() {
 function startGame() {
   loadImages();
   initAudio();
+  // Initialize run start time cookie once per run
+  try {
+    if (!getCookie("runStartTimeMs")) {
+      setCookie("runStartTimeMs", String(Date.now()));
+    }
+  } catch (_) {}
   // Initialize occasional glitch effects that do not disrupt gameplay
   try {
     const audio = document.getElementById("background-music");

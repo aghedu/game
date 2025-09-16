@@ -38,4 +38,4 @@ function changeItemState(name, state) {
     setCookie(name, state);
   }
 }
-export { getCookie, setCookie, changeItemState, itemStates };
+export { getCookie, setCookie, changeItemState, itemStates, deleteCookie };
