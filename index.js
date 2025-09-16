@@ -83,10 +83,12 @@ function endGame() {
   } catch (_) {}
 
   const pretty = formatDuration(elapsedMs);
+  const comment = commentForTime(elapsedMs);
   document.body.innerHTML = `
     <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:16px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;">
       <h1 style="font-size:2rem;">KOD TO: WATERFALL</h1>
       <h2 style="font-size:1.5rem;">Twój czas to: ${pretty}</h2>
+      <div style="white-space:pre-line;font-size:1.1rem;max-width:800px">${comment}</div>
       <button id="reset-run" style="margin-top:8px;padding:10px 16px;font-size:1rem;border-radius:8px;border:none;background:#0d6efd;color:#fff;cursor:pointer;">Zresetuj</button>
     </div>
   `;
@@ -117,6 +119,19 @@ function formatDuration(ms) {
   const pad = (n) => String(n).padStart(2, "0");
   if (h > 0) return `${h}h ${pad(m)}m ${pad(s)}s`;
   return `${m}m ${pad(s)}s`;
+}
+
+// Return the comment text matching the elapsed time ranges
+function commentForTime(ms) {
+  const min = ms / 60000;
+  if (min < 3) return "NIE MOŻ LI WE!\nPOKAŻ TO ADIEMU TO CI NIE UWIERZY";
+  if (min < 4) return "NIESAMOWITY WYNIK";
+  if (min < 5) return "BARDZO SZYBKOOO";
+  if (min < 7) return "CAŁKIEM SZYBKO";
+  if (min < 10) return "OKEJ WYNIK";
+  if (min < 15) return "SPROBOJ JESZCZE RAZ, MOZE DASZ RADE SZYBCIEJ :)";
+  if (min < 30) return "CO TU TAK WOLNO";
+  return "EJ KURWA CO TU TAK WOLNO";
 }
 
 // Clear all game-related cookies (items, flags, timers)
