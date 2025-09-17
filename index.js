@@ -14,6 +14,10 @@ let itemImages = [];
 let backgroundMusic;
 let hasInteracted = false;
 const successSound = new Audio("sounds/success.mp3");
+// NEW: control flags & IDs to allow freezing and proper cleanup
+let gameEnded = false;
+let rafId = null; // main animation frame id
+let checkIntervalId = null; // interval checking cookies
 
 function loadImages() {
   // Map new cookie keys to existing image filenames
@@ -71,19 +75,37 @@ function checkAllCookiesTrue() {
 }
 
 function endGame() {
+  if (gameEnded) return; // idempotent
+  gameEnded = true;
+
+  // Stop further animation & interval checks
+  if (rafId) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+  if (checkIntervalId) {
+    clearInterval(checkIntervalId);
+    checkIntervalId = null;
+  }
+
   canvas.style.display = "none";
   console.clear();
-  // Calculate elapsed time since the run started
-  const startCookie = getCookie("runStartTimeMs");
-  const startMs = startCookie ? parseInt(startCookie, 10) : Date.now();
-  const elapsedMs = Math.max(
-    0,
-    Date.now() - (isNaN(startMs) ? Date.now() : startMs)
-  );
-  // Persist last run time for reference
-  try {
-    setCookie("lastRunTimeMs", String(elapsedMs));
-  } catch (_) {}
+
+  // Use frozen final time if it exists; otherwise compute & freeze now
+  let finalTimeCookie = getCookie("finalRunTimeMs");
+  let elapsedMs;
+  if (finalTimeCookie) {
+    elapsedMs = parseInt(finalTimeCookie, 10) || 0;
+  } else {
+    const startCookie = getCookie("runStartTimeMs");
+    const startMs = startCookie ? parseInt(startCookie, 10) : Date.now();
+    elapsedMs = Math.max(0, Date.now() - (isNaN(startMs) ? Date.now() : startMs));
+    try {
+      setCookie("finalRunTimeMs", String(elapsedMs));
+      setCookie("runFinished", "true");
+      setCookie("lastRunTimeMs", String(elapsedMs)); // legacy compatibility
+    } catch (_) {}
+  }
 
   const pretty = formatDuration(elapsedMs);
   const comment = commentForTime(elapsedMs);
@@ -106,9 +128,7 @@ function endGame() {
       try {
         resetAllGameCookies();
       } catch (_) {}
-      // Also clear the saved music position
       localStorage.removeItem("musicCurrentTime");
-      // Reload to the main index
       window.location.replace("https://aghedu.github.io/game/");
     });
   }
@@ -157,6 +177,8 @@ function resetAllGameCookies() {
     // Timer/flags
     "runStartTimeMs",
     "lastRunTimeMs",
+    "finalRunTimeMs",
+    "runFinished",
     "cookiesRenamedV2",
   ];
   keys.forEach((k) => deleteCookie(k));
@@ -198,6 +220,13 @@ function startAudio() {
 }
 
 function startGame() {
+  // If run is already finished and final time frozen, immediately show it
+  try {
+    if (getCookie("finalRunTimeMs") && checkAllCookiesTrue()) {
+      return endGame();
+    }
+  } catch (_) {}
+
   loadImages();
   initAudio();
   // Initialize run start time cookie once per run
@@ -222,7 +251,7 @@ function startGame() {
   const STEP = 1000 / FPS;
   let last = undefined;
   let acc = 0;
-  let rafId;
+  // rafId is module-scoped now so endGame can cancel it
 
   function frame(now) {
     if (last === undefined) last = now;
@@ -240,13 +269,16 @@ function startGame() {
     rafId = requestAnimationFrame(frame);
   }
 
-  requestAnimationFrame(frame);
+  rafId = requestAnimationFrame(frame);
 
   // Check for all cookies being true every second
-  const checkInterval = setInterval(() => {
+  checkIntervalId = setInterval(() => {
+    if (gameEnded) return; // safety
     if (checkAllCookiesTrue()) {
-      clearInterval(checkInterval);
-      setTimeout(endGame, 1000);
+      clearInterval(checkIntervalId);
+      checkIntervalId = null;
+      // Freeze time immediately (do not let it drift until timeout)
+      endGame();
     }
   }, 1000);
 
